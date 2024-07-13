@@ -25,3 +25,5 @@ jobs:
 
     # Commented out because we don't have a test suite set up yet
     # - run: npm test
+
+    # Testing CI workflow
