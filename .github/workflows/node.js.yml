@@ -20,7 +20,13 @@ jobs:
       with:
         node-version: 20
         cache: 'npm'
-    - run: npm ci
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run ESLint
+      run: npm run lint
+      
     - run: npm run build --if-present
 
     # Commented out because we don't have a test suite set up yet
