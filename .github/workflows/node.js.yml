@@ -20,15 +20,18 @@ jobs:
       with:
         node-version: 20
         cache: 'npm'
+        cache-dependency-path: server/package-lock.json  # Specify the path to the package-lock.json file
 
     - name: Install dependencies
       run: npm ci
+      working-directory: server
       
     # Add in this linter when ready
     # - name: Run ESLint
       # run: npm run lint
       
     - run: npm run build --if-present
+      working-directory: server
 
     # Commented out because we don't have a test suite set up yet
     # - run: npm test

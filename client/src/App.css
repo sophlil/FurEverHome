@@ -1,0 +1,107 @@
+.App {
+    text-align: center;
+  }
+
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+      animation: App-logo-spin infinite 20s linear;
+    }
+  }
+
+  .App-header {
+    background-color: #6982b5;
+    font-family: sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: rgb(4, 59, 28);
+  }
+
+
+  .list-container{
+    gap: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+  body {
+    background-color:  #6982b5;
+    font-family: sans-serif;
+    color:black;
+    margin: 1px;
+    padding: 1rem
+  }
+
+  h1 {
+    color: rgb(71, 32, 19);
+    font-family: sans-serif;
+  }
+
+  h2{
+    color:rgb(71, 32, 19);
+    font-family: sans-serif;
+  }
+
+  td,th {
+    border:1px saddlebrown;
+    padding: 0.5rem;
+    color:blueviolet;
+    background-color:burlywood
+  }
+
+  tr,td{
+    border:#ae5011 1px;
+    padding: 0.5rem;
+    color:blueviolet;
+    background-color: goldenrod;
+
+  }
+
+  footer{
+    align-items:flex-start;
+  }
+
+  fieldset{
+    font-family: sans-serif;
+    font-size: large;
+
+  }
+  legend{
+    font-family: sans-serif;
+
+  }
+  input{
+    font-family: sans-serif;
+    float:right;
+
+  }
+  button{
+    font-family: sans-serif;
+    height: 50px;
+    width: 200px;
+    font-size:x-large;
+    background-color: gray;
+    margin:10px;
+  }
+
+  .App-link {
+    color: #61dafb;
+  }
+
+
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
