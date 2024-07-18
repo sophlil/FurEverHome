@@ -9,18 +9,18 @@ const Login = () => {
         <div>
             <header>
             <h2>Login Page</h2>
-                <form>
+                <form action="http://localhost:3005/login" method="post">
                     <fieldset>
                         <legend>User Name</legend>
                         <label>Please enter your User Name</label>
-                        <input type = "text" value={userName}
+                        <input type = "text" name="username" value={userName}
                         onChange = {e => setUserName(e.target.value)} required></input>
                     </fieldset>
 
                     <fieldset>
                     <legend>Password</legend>
                         <label>Please enter your Password</label>
-                        <input type = "text" value={password}
+                        <input type = "text" name="password" value={password}
                         onChange = {e=> setPassword(e.target.value)} required></input>
 
                     </fieldset>
