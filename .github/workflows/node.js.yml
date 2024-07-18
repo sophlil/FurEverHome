@@ -34,8 +34,11 @@ jobs:
     # - name: Run ESLint
       # run: npm run lint
       
-    - run: npm run build --if-present
+    - name: Build project
+      run: npm run build --if-present
       working-directory: ${{ matrix.directory }}
+      env:
+        NODE_OPTIONS: --openssl-legacy-provider
 
     # Commented out because we don't have a test suite set up yet
     # - run: npm test
