@@ -1,0 +1,4 @@
+MONGODB_CONNECT_STRING="mongodb+srv://{USER_NAME}:{PASSWORD}@cluster0.9i6s72o.mongodb.net/fureverhome"
+MONGODB_USER="fureverhome"
+MONGODB_PASSWORD="bM1EqKmHul3guJQ9"
+PORT=3005
