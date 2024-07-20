@@ -76,7 +76,7 @@ passport.deserializeUser(function(id, done) {
     // })
     query.then(result => {
         if (result.type == 'admin') {
-            const queryAdmin = adminDbFunction.getAdminProfileById(id).then(admin => {
+            const queryAdmin =  adminDbFunction.getAdminProfileById(id).then(admin => {
                 return done(null, admin);
             })
         }
@@ -142,7 +142,8 @@ app.put('/register/admin', (req, res) => {
 
 app.post('/login',
     passport.authenticate('local', {
-        successRedirect: 'http://localhost:3000/',
+        successRedirect: 'http://localhost:3005/profile',
+        // successRedirect: 'http://localhost:3000/',
         failureRedirect: '/login',
         failureFlash: true
     })
