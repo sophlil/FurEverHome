@@ -33,11 +33,12 @@ const usersModel = mongoose.model("Users", usersSchema);
 
 
 // CRUD
-const createUser = async (userName, password) => {
+const createUser = async (userName, password, type) => {
     const hashed = await encrypt(password);
     const user = new usersModel({
         userName: userName,
-        password: hashed
+        password: hashed,
+        type: type
     });
     return user.save();
 };
