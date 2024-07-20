@@ -33,7 +33,7 @@ const usersModel = mongoose.model("Users", usersSchema);
 
 
 // CRUD
-const addUser = async (userName, password) => {
+const createUser = async (userName, password) => {
     const hashed = await encrypt(password);
     const user = new usersModel({
         userName: userName,
@@ -58,4 +58,4 @@ const getAllUser = async () => {
 };
 
 
-export {addUser, getAllUser, getUserByUserName, getUserByID};
+export {createUser, getAllUser, getUserByUserName, getUserByID};
