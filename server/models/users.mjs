@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import {encrypt} from "../lib/auth.mjs";
 import "dotenv/config";
 
-const saltRounds = 10;
 
 mongoose.connect(process.env.MONGODB_CONNECT_STRING,
     {user: process.env.MONGODB_USER, pass: process.env.MONGODB_PASSWORD}
