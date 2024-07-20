@@ -97,13 +97,11 @@ function isAuthenticated(req, res, next) {
 }
 
 
-
 /*
 ****************************************************************************
 ADMIN PROFILES
 ****************************************************************************
 */
-
 // create admin profile
 app.put('/register/admin', (req, res) => {
     const query = userDbFunction.getUserByUserName(req.body.userName);
