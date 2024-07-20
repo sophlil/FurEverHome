@@ -20,7 +20,8 @@ db.once("open", (err) => {
 // Schemas
 const adminProfilesSchema = mongoose.Schema({
     name: {type: String, required: true, unique: true},
-    address: {type: String, required: true}
+    address: {type: String, required: true},
+    userId: {type: String, required: true}
 }, {
     versionKey: false
 });
@@ -31,16 +32,17 @@ const adminProfilesModel = mongoose.model("AdminProfiles", adminProfilesSchema);
 
 
 // CRUD
-const createAdminProfile = async (name, address) => {
+const createAdminProfile = async (name, address, userId) => {
     const user = new adminProfilesModel({
         name: name,
-        address: address
+        address: address,
+        userId: userId
     });
     return user.save();
 };
 
 const getAdminProfileById = async (ID) => {
-    return await adminProfilesModel.findById(ID).exec();
+    return await adminProfilesModel.findOne({'userId': ID}).exec();
 };
 
 // Update

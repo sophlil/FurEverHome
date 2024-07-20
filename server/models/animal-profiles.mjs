@@ -22,22 +22,33 @@ const animalProfilesSchema = mongoose.Schema({
     animalName: {type: String, required: true, unique: true},
     type: {type: String, required: true},                   // dog, cat, other
     breed: {type: String, required: true},                  // most common ones + "Other"
-    disposition: {type: String, required: false},           // "Good with other animals", "Good with children", "Animal must be leashed at all times"
-    dateCreated: {type: Date, required: true},
+    disposition: {type: String, required: true},            // "Good with other animals", "Good with children", "Animal must be leashed at all times"
     isAvailable: {type: Boolean, require: true},
+    dateCreated: {type: Date, default : Date.Now, require: true},
     createByUserId: {type: String, required: true}
 }, {
     versionKey: false
 });
 
 // Animal Profile Model
-const animalProfileModel = mongoose.model("AnimalProfiles", animalProfilesSchema)
+const animalProfileModel = mongoose.model("AnimalProfiles", animalProfilesSchema);
 
 // CRUD
 // Create animal profile
-const addAnimalProfile = async (data) => {
+const createAnimalProfile = async (animalName, type, breed, disposition, isAvailable, createByUserId) => {
     try {
-        const animalProfile = new animalProfileModel(data);
+        const now = Date.now();
+        const animalProfile = new animalProfileModel(
+            {
+                animalName: animalName, 
+                type: type, 
+                breed: breed, 
+                disposition: disposition, 
+                isAvailable: isAvailable, 
+                dateCreated: now,
+                createByUserId: createByUserId
+            }
+        );
         const savedProfile = await animalProfile.save();
         console.log('Animal profile created successfully:', savedProfile);
         return savedProfile;
@@ -61,9 +72,37 @@ const getAnimalProfileByName = async (animalName) => {
 
 // Read (get) animal profile by ID
 const getAnimalProfileByID = async (id) => {
-    const query = animalProfileModel.findByID(id);
+    const query = animalProfileModel.findById(id);
     return query.exec();
 }
 
+// Update
+const updateAnimalById = async (id, animalName, type, breed, disposition, isAvailable, dateCreated, createByUserId) => {
+    const updateResponse = await animalProfileModel.replaceOne({_id: id}, {
+        animalName: animalName,
+        type: type,
+        breed: breed,
+        disposition: disposition,
+        isAvailable: isAvailable,
+        dateCreated: dateCreated,
+        createByUserId: createByUserId
+    });
+    return {
+        id: id,
+        animalName: animalName,
+        type: type,
+        breed: breed,
+        disposition: disposition,
+        isAvailable: isAvailable,
+        dateCreated: dateCreated,
+        createByUserId: createByUserId
+    }
+};
 
-export {addAnimalProfile, getAllAnimalProfiles, getAnimalProfileByName, getAnimalProfileByID};
+// Delete
+const deleteAnimalById = async(id) => {
+    return await animalProfileModel.deleteOne({_id: id}).exec();
+}
+
+
+export {createAnimalProfile, getAllAnimalProfiles, getAnimalProfileByName, getAnimalProfileByID, updateAnimalById, deleteAnimalById};
