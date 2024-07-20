@@ -21,7 +21,8 @@ db.once("open", (err) => {
 // Schemas
 const usersSchema = mongoose.Schema({
     userName: {type: String, required: true, unique: true},
-    password: {type: String, required: true}
+    password: {type: String, required: true},
+    type: {type: String, required: true}
 }, {
     versionKey: false
 });
