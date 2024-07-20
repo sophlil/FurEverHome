@@ -19,19 +19,51 @@ db.once("open", (err) => {
 
 // Defines Animal Profile Schema
 const animalProfilesSchema = mongoose.Schema({
-    name: { type: String, required: true },
-    species: { type: String, required: true },
-    breed: { type: String },
-    age: { type: Number, required: true },
-    disposition: { type: String },
-    availability: { type: String },
-    weight: { type: Number },
-    height: { type: Number },
-    description: { type: String },
-    dateCreated: { type: Date, default: Date.now }
+    animalName: {type: String, required: true, unique: true},
+    type: {type: String, required: true},                   // dog, cat, other
+    breed: {type: String, required: true},                  // most common ones + "Other"
+    disposition: {type: String, required: false},           // "Good with other animals", "Good with children", "Animal must be leashed at all times"
+    dateCreated: {type: Date, required: true},
+    isAvailable: {type: Boolean, require: true},
+    createByUserId: {type: String, required: true}
 }, {
     versionKey: false
 });
 
 // Animal Profile Model
 const animalProfileModel = mongoose.model("AnimalProfiles", animalProfilesSchema)
+
+// CRUD
+// Create animal profile
+const addAnimalProfile = async (data) => {
+    try {
+        const animalProfile = new animalProfileModel(data);
+        const savedProfile = await animalProfile.save();
+        console.log('Animal profile created successfully:', savedProfile);
+        return savedProfile;
+    } catch (error) {
+        console.error('Error creating animal profile:', error);
+        throw error;
+    }
+}
+
+// Read (get) all animal profiles
+const getAllAnimalProfiles = async () => {
+    const query = animalProfileModel.find();
+    return query.exec();
+}
+
+// Read (get) animal profiles by name
+const getAnimalProfileByName = async (animalName) => {
+    const query = animalProfileModel.find({ animalName: animalName});
+    return query.exec();
+}
+
+// Read (get) animal profile by ID
+const getAnimalProfileByID = async (id) => {
+    const query = animalProfileModel.findByID(id);
+    return query.exec();
+}
+
+
+export {addAnimalProfile, getAllAnimalProfiles, getAnimalProfileByName, getAnimalProfileByID};
