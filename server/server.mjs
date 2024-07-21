@@ -4,6 +4,7 @@ import flash from 'express-flash';
 import {authenticate} from './lib/auth.mjs'; 
 import bodyParser from 'body-parser';
 import * as dbFunction from './models/users.mjs';
+import * as animalDbFunction from './models/animal-profiles.mjs';
 import passport from 'passport';
 import {Strategy as LocalStrategy} from "passport-local";
 import 'dotenv/config';
@@ -25,6 +26,12 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+/*
+****************************************************************************
+LANDING AND LOGIN PAGES
+****************************************************************************
+*/
 
 // source: https://github.com/jaredhanson/passport-local
 // https://www.passportjs.org/concepts/authentication/downloads/html/
@@ -202,7 +209,82 @@ function isAuthenticated(req, res, next) {
 ////
 
 
+/*
+****************************************************************************
+APP STARTUP/LISTENER
+****************************************************************************
+*/
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
+});
+
+
+/*
+****************************************************************************
+ANIMAL PROFILES
+****************************************************************************
+*/
+
+
+// Add Animal Profile
+app.post('/addanimalprofile', (req, res) => {
+
+    animalDbFunction.addAnimalProfile(res.body)
+    .then(animalProfile => {
+        res.status(201).json({comment: "Successful"});
+    })
+    .catch(error => {
+        console.log(error);
+        res.status(400).json({error: "Create animal profile failed"});
+    })
+});
+
+// Get All Animal Profiles
+app.get('/getallanimalprofiles', (req, res) => {
+    animalDbFunction.getAllAnimalProfiles()
+    .then(animalProfiles => {
+        if (animalProfiles !== null) {
+            res.json(animalProfiles);
+        } else {
+            res.status(404).json({error: "No animal profiles found"});
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Retrieve all animal profiles failed"});
+    });
+});
+
+// Get Animal Profiles by Animal Name
+app.get('/getanimalprofilesbyname:animalName', (req, res) => {
+    animalDbFunction.getAnimalProfileByName(req.params.animalName)
+    .then(animalProfiles => {
+        if (animalProfiles !== null) {
+            res.json(animalProfiles);
+        } else {
+            res.status(404).json({error: "No animal profiles with that name found"});
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Retrieve animal profile by name failed"});
+    });
+});
+
+// Get Animal Profile by ID
+app.get('/getanimalprofilesbyid:id', (req, res) => {
+    animalDbFunction.getAnimalProfileByID(req.params.id)
+    .then(animalProfiles => {
+        if (animalProfiles !== null) {
+            console.log(animalProfiles._id.toString());
+            res.json(animalProfiles);
+        } else {
+            res.status(404).json({error: "No animal profiles with that id found"});
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Retrieve animal profile by id failed"});
+    });
 });
