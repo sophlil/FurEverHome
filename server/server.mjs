@@ -3,8 +3,9 @@ import session from 'express-session';
 import flash from 'express-flash';
 import {authenticate} from './lib/auth.mjs'; 
 import bodyParser from 'body-parser';
-import * as dbFunction from './models/users.mjs';
+import * as userDbFunction from './models/users.mjs';
 import * as animalDbFunction from './models/animal-profiles.mjs';
+import * as adminDbFunction from './models/admin-profiles.mjs';
 import passport from 'passport';
 import {Strategy as LocalStrategy} from "passport-local";
 import 'dotenv/config';
@@ -37,7 +38,7 @@ LANDING AND LOGIN PAGES
 // https://www.passportjs.org/concepts/authentication/downloads/html/
 passport.use(new LocalStrategy(
     function(user, password, done) {
-        const query = dbFunction.getUserByUserName(user)
+        const query = userDbFunction.getUserByUserName(user)
 
         query.then(user => {
             // invalid userName
@@ -61,17 +62,6 @@ passport.use(new LocalStrategy(
     }
 ));
 
-// passport.use(new LocalStrategy(
-//     (username, password, done) => {
-//         // demo credentials
-//         if (username === 'admin' && password === 'gfg') {
-//             return done(null, { id: 1, username: 'user' });
-//         } else {
-//             return done(null, false,
-//                 { message: 'Hey Geek! Incorrect username or password.' });
-//         }
-//     }
-// ));
 
 passport.serializeUser(function(user, done) {
     return done(null, user._id.toString());
@@ -79,29 +69,65 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
 
-    const query = dbFunction.getUserByID(id);
+    const query = userDbFunction.getUserByID(id);
 
+    // query.then(result => {
+    //     return done(null, result);
+    // })
     query.then(result => {
-        return done(null, result);
+        if (result.type == 'admin') {
+            const queryAdmin =  adminDbFunction.getAdminProfileById(id).then(admin => {
+                return done(null, admin);
+            })
+        }
+        // user for public profile
+        // else {
+
+        // }
     })
 });
 
 
-app.post('/register', (req, res) => {
-    const query = dbFunction.getUserByUserName(req.body.userName);
+// check if user is authenticated
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
+
+/*
+****************************************************************************
+ADMIN PROFILES
+****************************************************************************
+*/
+// create admin profile
+app.put('/register/admin', (req, res) => {
+    const query = userDbFunction.getUserByUserName(req.body.userName);
 
     query.then(results => {
         // check if userName is already being used
         if (results != null) {
             res.status(400).json({error: "400: e-mail is already registered."});
         } else {
-            // continue to add user if userName was not registered
-            dbFunction.addUser(
+            // create user entry
+            userDbFunction.createUser(
                 req.body.userName,
-                req.body.password.toString()
+                req.body.password.toString(),
+                'admin'
             )
-            .then(users => {
-                res.status(201).json({comment: "Successful"});
+            .then(user => {
+                // create admin profile
+                const userId = user._id.toString();
+                adminDbFunction.createAdminProfile(
+                    req.body.name,
+                    req.body.address,
+                    userId
+                )
+                .then(adminProfile => {
+                    res.status(201).json(adminProfile);
+                })
             })
             .catch(error => {
                 console.log(error);
@@ -114,7 +140,8 @@ app.post('/register', (req, res) => {
 
 app.post('/login',
     passport.authenticate('local', {
-        successRedirect: 'http://localhost:3000/',
+        successRedirect: 'http://localhost:3005/profile',
+        // successRedirect: 'http://localhost:3000/',
         failureRedirect: '/login',
         failureFlash: true
     })
@@ -128,15 +155,9 @@ app.post('/logout', function (req, res){
 });
 
 
-app.get('/getusers', (req, res) => {
+app.get('/user', (req, res) => {
 
-    if (req.isAuthenticated()) {
-        console.log(req.isAuthenticated())
-    } else {
-        console.log(req.isAuthenticated())
-    }
-
-    dbFunction.getAllUser().then(users => {
+    userDbFunction.getAllUser().then(users => {
         if (users !== null) {
             res.json(users);
         }
@@ -151,9 +172,9 @@ app.get('/getusers', (req, res) => {
 });
 
 
-app.get('/getuser/:id', (req, res) => {
+app.get('/user/:id', (req, res) => {
 
-    dbFunction.getUserByID(req.params.id).then(users => {
+    userDbFunction.getUserByID(req.params.id).then(users => {
         if (users !== null) {
             console.log(users._id.toString());
             res.json(users);
@@ -169,57 +190,6 @@ app.get('/getuser/:id', (req, res) => {
 });
 
 
-
-// Examples from Geeks for geeks
-// https://www.geeksforgeeks.org/explain-the-use-of-passport-js-for-authentication-in-express-applications/
-app.get('/', (req, res) => {
-    res.send('<h1>Passport.js Authentication Example</h1>');
-});
-app.get('/login', (req, res) => {
-    res.send('<h1>Login Page</h1><form action="/login" method="post">' +
-        'Username: <input type="text" name="username"><br>' +
-        'Password: <input type="password" name="password"><br>' +
-        '<input type="submit" value="Login"></form>'
-    );
-});
-
-app.get('/profile', isAuthenticated, (req, res) => {
-    res.send(
-        `<h1>Welcome ${req.user.userName}!
-        </h1><a href="/logout">Logout</a>`
-    );
-});
-
-app.get('/logout', (req, res) => {
-    req.logout((err) => {
-        if (err) {
-            return next(err);
-        }
-        res.redirect('/');
-    });
-});
-
-// middleware to check if the user is authenticated
-function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/login');
-}
-////
-
-
-/*
-****************************************************************************
-APP STARTUP/LISTENER
-****************************************************************************
-*/
-
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}...`);
-});
-
-
 /*
 ****************************************************************************
 ANIMAL PROFILES
@@ -228,9 +198,16 @@ ANIMAL PROFILES
 
 
 // Add Animal Profile
-app.post('/addanimalprofile', (req, res) => {
+app.put('/register/animal', (req, res) => {
 
-    animalDbFunction.addAnimalProfile(res.body)
+    animalDbFunction.createAnimalProfile(
+        req.body.animalName,
+        req.body.type,
+        req.body.breed,
+        req.body.disposition,
+        req.body.isAvailable,
+        'userId' // once front end is enabled
+    )
     .then(animalProfile => {
         res.status(201).json({comment: "Successful"});
     })
@@ -241,7 +218,7 @@ app.post('/addanimalprofile', (req, res) => {
 });
 
 // Get All Animal Profiles
-app.get('/getallanimalprofiles', (req, res) => {
+app.get('/animal', (req, res) => {
     animalDbFunction.getAllAnimalProfiles()
     .then(animalProfiles => {
         if (animalProfiles !== null) {
@@ -257,7 +234,7 @@ app.get('/getallanimalprofiles', (req, res) => {
 });
 
 // Get Animal Profiles by Animal Name
-app.get('/getanimalprofilesbyname:animalName', (req, res) => {
+app.get('/animal/name/:animalName', (req, res) => {
     animalDbFunction.getAnimalProfileByName(req.params.animalName)
     .then(animalProfiles => {
         if (animalProfiles !== null) {
@@ -273,7 +250,7 @@ app.get('/getanimalprofilesbyname:animalName', (req, res) => {
 });
 
 // Get Animal Profile by ID
-app.get('/getanimalprofilesbyid:id', (req, res) => {
+app.get('/animal/:id', (req, res) => {
     animalDbFunction.getAnimalProfileByID(req.params.id)
     .then(animalProfiles => {
         if (animalProfiles !== null) {
@@ -287,4 +264,101 @@ app.get('/getanimalprofilesbyid:id', (req, res) => {
         console.error(error);
         res.status(400).json({error: "Retrieve animal profile by id failed"});
     });
+});
+
+
+// Update
+// app.get('/animal/:id', isAuthenticated, (req, res) => {
+app.post('/animal/:id', (req, res) => {
+    // TODO
+    // get animal profile and check created by user id 
+    // req.user.userId
+
+    const animal = animalDbFunction.getAnimalProfileByID(req.params.id);
+
+    animal.then(animalProfile => {
+        if (animalProfile == null) {
+            res.status(404).json({error: "Animal Profile Not Found."});
+        }
+        else {
+            // update 
+            animalDbFunction.updateAnimalById(
+                req.params.id,
+                req.body.animalName,
+                req.body.type,
+                req.body.breed,
+                req.body.disposition,
+                req.body.isAvailable,
+                animalProfile.dateCreated,
+                animalProfile.createByUserId
+            )
+            .then(results => {
+                res.sendStatus(200)
+            })
+            .catch(error => {
+                console.error(error);
+                res.status(400).json({error: "Update document had failed."});
+            })
+        }
+    })
+
+})
+
+
+// Delete
+// app.get('/animals/:id', isAuthenticated, (req, res) => {
+app.delete('/animal/:id', (req, res) => {
+    // TODO
+    // get animal profile and check created by user id 
+    // req.user.userId
+    
+    animalDbFunction.deleteAnimalById(req.params.id).then(results => {
+        res.sendStatus(200)
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Delete document had failed."});
+    })
+})
+
+
+/*
+****************************************************************************
+APP STARTUP/LISTENER - And Express Testing Envrionment
+****************************************************************************
+*/
+
+// Examples from Geeks for geeks
+// https://www.geeksforgeeks.org/explain-the-use-of-passport-js-for-authentication-in-express-applications/
+
+app.get('/', (req, res) => {
+    res.send('<h1>Passport.js Authentication Example</h1>');
+});
+app.get('/login', (req, res) => {
+    res.send('<h1>Login Page</h1><form action="/login" method="post">' +
+        'Username: <input type="text" name="username"><br>' +
+        'Password: <input type="password" name="password"><br>' +
+        '<input type="submit" value="Login"></form>'
+    );
+});
+
+app.get('/profile', isAuthenticated, (req, res) => {
+    res.send(
+        `<h1>Welcome ${req.user.name}!
+        </h1><a href="/logout">Logout</a>`
+    );
+});
+
+app.get('/logout', (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/');
+    });
+});
+
+
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}...`);
 });

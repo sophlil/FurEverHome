@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import {encrypt} from "../lib/auth.mjs";
 import "dotenv/config";
 
-const saltRounds = 10;
 
 mongoose.connect(process.env.MONGODB_CONNECT_STRING,
     {user: process.env.MONGODB_USER, pass: process.env.MONGODB_PASSWORD}
@@ -22,7 +21,8 @@ db.once("open", (err) => {
 // Schemas
 const usersSchema = mongoose.Schema({
     userName: {type: String, required: true, unique: true},
-    password: {type: String, required: true}
+    password: {type: String, required: true},
+    type: {type: String, required: true}
 }, {
     versionKey: false
 });
@@ -33,11 +33,12 @@ const usersModel = mongoose.model("Users", usersSchema);
 
 
 // CRUD
-const addUser = async (userName, password) => {
+const createUser = async (userName, password, type) => {
     const hashed = await encrypt(password);
     const user = new usersModel({
         userName: userName,
-        password: hashed
+        password: hashed,
+        type: type
     });
     return user.save();
 };
@@ -58,4 +59,4 @@ const getAllUser = async () => {
 };
 
 
-export {addUser, getAllUser, getUserByUserName, getUserByID};
+export {createUser, getAllUser, getUserByUserName, getUserByID};
