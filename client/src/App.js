@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Login from './pages/Login';
+import Browse from './pages/BrowsePets'
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -19,11 +20,17 @@ return (
             <nav>
                 <Link to ="/Login">Login</Link>
             </nav>
+            <nav>
+              <Link to ="/Browse">Browse Pets</Link>
+            </nav>
             <div className="App-header">
           <Route path="/Login">
             <Login />
-
           </Route>
+          <Route path="/Browse">
+            <Browse />
+          </Route>
+
 
             </div>
             </Router>
