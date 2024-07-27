@@ -46,25 +46,17 @@ const getAdminProfileById = async (ID) => {
 };
 
 // Update
-const updateAdminProfileById = async (id, name, type, breed, disposition, isAvailable) => {
+const updateAdminProfileById = async (id, name, address, userId) => {
     const updateResponse = await adminProfilesModel.replaceOne({_id: id}, {
         name: name,
-        type: type,
-        breed: breed,
-        disposition: disposition,
-        dateCreated: dateCreated,
-        isAvailable: isAvailable,
-        createByUserId: createByUserId
+        address: address,
+        userId: userId
     });
     return {
         id: id,
         name: name,
-        type: type,
-        breed: breed,
-        disposition: disposition,
-        dateCreated: dateCreated,
-        isAvailable: isAvailable,
-        createByUserId: createByUserId
+        address: address,
+        userId: userId
     }
 };
 
