@@ -117,6 +117,46 @@ app.post('/logout', function (req, res){
 
 /*
 ****************************************************************************
+Users
+****************************************************************************
+*/
+app.get('/user', (req, res) => {
+
+    userDbFunction.getAllUser().then(users => {
+        if (users !== null) {
+            res.json(users);
+        }
+        else {
+            res.status(404).json({error: "Document was not found."});
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Retrieve document had failed."});
+    });
+});
+
+
+app.get('/user/:id', (req, res) => {
+
+    userDbFunction.getUserByID(req.params.id).then(users => {
+        if (users !== null) {
+            console.log(users._id.toString());
+            res.json(users);
+        }
+        else {
+            res.status(404).json({error: "Document was not found."});
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Retrieve document had failed."});
+    });
+});
+
+
+/*
+****************************************************************************
 ADMIN PROFILES
 ****************************************************************************
 */
@@ -156,11 +196,15 @@ app.put('/register/admin', (req, res) => {
 });
 
 
-app.get('/user', (req, res) => {
+app.get('/admin/:id', (req, res) => {
+    // TODO
+    // get user profile and check created by user id 
+    // req.user.userId
 
-    userDbFunction.getAllUser().then(users => {
-        if (users !== null) {
-            res.json(users);
+    adminDbFunction.getAdminProfileById(req.params.id).then(admin => {
+        if (admin !== null) {
+            console.log(admin._id.toString());
+            res.json(admin);
         }
         else {
             res.status(404).json({error: "Document was not found."});
@@ -170,28 +214,10 @@ app.get('/user', (req, res) => {
         console.error(error);
         res.status(400).json({error: "Retrieve document had failed."});
     });
-});
+})
 
 
-app.get('/user/:id', (req, res) => {
-
-    userDbFunction.getUserByID(req.params.id).then(users => {
-        if (users !== null) {
-            console.log(users._id.toString());
-            res.json(users);
-        }
-        else {
-            res.status(404).json({error: "Document was not found."});
-        }
-    })
-    .catch(error => {
-        console.error(error);
-        res.status(400).json({error: "Retrieve document had failed."});
-    });
-});
-
-
-app.post('/user/:id', (req, res) => {
+app.post('/admin/:id', (req, res) => {
     // TODO
     // get user profile and check created by user id 
     // req.user.userId
@@ -200,7 +226,7 @@ app.post('/user/:id', (req, res) => {
 
     admin.then(adminProfile => {
         if (adminProfile == null) {
-            res.status(404).json({error: "Animal Profile Not Found."});
+            res.status(404).json({error: "Admin Profile Not Found."});
         }
         else {
             // update 
@@ -219,13 +245,12 @@ app.post('/user/:id', (req, res) => {
             })
         }
     })
-
 })
 
 
 // Delete
 // app.get('/animals/:id', isAuthenticated, (req, res) => {
-app.delete('/user/:id', (req, res) => {
+app.delete('/admin/:id', (req, res) => {
     // TODO
     // get animal profile and check created by user id 
     // req.user.userId
