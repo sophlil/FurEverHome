@@ -97,6 +97,23 @@ function isAuthenticated(req, res, next) {
 }
 
 
+app.post('/login',
+    passport.authenticate('local', {
+        // successRedirect: 'http://localhost:3005/profile',
+        successRedirect: 'http://localhost:3000/Browse',
+        failureRedirect: 'http://localhost:3000/login',
+        failureFlash: true
+    })
+);
+
+
+app.post('/logout', function (req, res){
+    req.session.destroy(function (err) {
+        res.redirect('/');
+    });
+});
+
+
 /*
 ****************************************************************************
 ADMIN PROFILES
@@ -135,23 +152,6 @@ app.put('/register/admin', (req, res) => {
             });
         };
     })
-});
-
-
-app.post('/login',
-    passport.authenticate('local', {
-        // successRedirect: 'http://localhost:3005/profile',
-        successRedirect: 'http://localhost:3000/Browse',
-        failureRedirect: 'http://localhost:3000/login',
-        failureFlash: true
-    })
-);
-
-
-app.post('/logout', function (req, res){
-    req.session.destroy(function (err) {
-        res.redirect('/');
-    });
 });
 
 
