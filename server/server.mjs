@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import * as userDbFunction from './models/users.mjs';
 import * as animalDbFunction from './models/animal-profiles.mjs';
 import * as adminDbFunction from './models/admin-profiles.mjs';
+import * as publicDbFunction from './models/public-profiles.mjs';
 import passport from 'passport';
 import {Strategy as LocalStrategy} from "passport-local";
 import 'dotenv/config';
