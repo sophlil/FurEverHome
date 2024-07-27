@@ -140,9 +140,9 @@ app.put('/register/admin', (req, res) => {
 
 app.post('/login',
     passport.authenticate('local', {
-        successRedirect: 'http://localhost:3005/profile',
-        // successRedirect: 'http://localhost:3000/',
-        failureRedirect: '/login',
+        // successRedirect: 'http://localhost:3005/profile',
+        successRedirect: 'http://localhost:3000/Browse',
+        failureRedirect: 'http://localhost:3000/login',
         failureFlash: true
     })
 );
@@ -188,6 +188,55 @@ app.get('/user/:id', (req, res) => {
         res.status(400).json({error: "Retrieve document had failed."});
     });
 });
+
+
+app.post('/user/:id', (req, res) => {
+    // TODO
+    // get user profile and check created by user id 
+    // req.user.userId
+
+    const admin = adminDbFunction.getAdminProfileById(req.params.id);
+
+    admin.then(adminProfile => {
+        if (adminProfile == null) {
+            res.status(404).json({error: "Animal Profile Not Found."});
+        }
+        else {
+            // update 
+            animalDbFunction.updateAnimalById(
+                req.params.id,
+                req.body.name,
+                req.body.address,
+                adminProfile.userId
+            )
+            .then(results => {
+                res.sendStatus(200)
+            })
+            .catch(error => {
+                console.error(error);
+                res.status(400).json({error: "Update document had failed."});
+            })
+        }
+    })
+
+})
+
+
+// Delete
+// app.get('/animals/:id', isAuthenticated, (req, res) => {
+app.delete('/user/:id', (req, res) => {
+    // TODO
+    // get animal profile and check created by user id 
+    // req.user.userId
+    
+    adminDbFunction.deleteAdminProfileById(req.params.id).then(results => {
+        res.sendStatus(200)
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Delete document had failed."});
+    })
+})
 
 
 /*
