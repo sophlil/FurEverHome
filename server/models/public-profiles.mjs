@@ -20,7 +20,6 @@ db.once("open", (err) => {
 // Schemas
 const publicProfilesSchema = mongoose.Schema({
     name: {type: String, required: true, unique: true},
-    address: {type: String, required: true},
     userId: {type: String, required: true}
 }, {
     versionKey: false
@@ -32,10 +31,9 @@ const publicProfilesModel = mongoose.model("PublicProfiles", publicProfilesSchem
 
 
 // CRUD
-const createPublicProfile = async (name, address, userId) => {
+const createPublicProfile = async (name, userId) => {
     const user = new publicProfilesModel({
         name: name,
-        address: address,
         userId: userId
     });
     return user.save();
@@ -46,16 +44,14 @@ const getPublicProfileById = async (ID) => {
 };
 
 // Update
-const updatePublicProfileById = async (id, name, address, userId) => {
+const updatePublicProfileById = async (id, name, userId) => {
     const updateResponse = await publicProfilesModel.replaceOne({_id: id}, {
         name: name,
-        address: address,
         userId: userId
     });
     return {
         id: id,
         name: name,
-        address: address,
         userId: userId
     }
 };
