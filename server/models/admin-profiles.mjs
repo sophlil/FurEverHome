@@ -13,7 +13,7 @@ db.once("open", (err) => {
         res.status(500).json({error: '500: Unable to connect to server.' });
     }
     else {
-        console.log("Connection Established");
+        console.log("Connection Established -- Admin Profile");
     }
 });
 
