@@ -14,7 +14,7 @@ db.once("open", (err) => {
         res.status(500).json({error: '500: Unable to connect to server.' });
     }
     else {
-        console.log("Connection Established");
+        console.log("Connection Established -- Users");
     }
 });
 
@@ -52,6 +52,14 @@ const getUserByID = async (ID) => {
 };
 
 
+const deleteUser = async(id) => {
+    const userDelete = usersModel.deleteOne({_id: id})
+    userDelete.then(deleteCount => {
+        return deleteCount.deleteCount;
+    })
+}
+
+
 // To be removed
 const getAllUser = async () => {
     const query = usersModel.find();
@@ -59,4 +67,4 @@ const getAllUser = async () => {
 };
 
 
-export {createUser, getAllUser, getUserByUserName, getUserByID};
+export {createUser, getAllUser, getUserByUserName, getUserByID, deleteUser};

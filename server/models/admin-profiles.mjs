@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import "dotenv/config";
+import * as userDbFunction from './users.mjs';
 
 
 mongoose.connect(process.env.MONGODB_CONNECT_STRING,
@@ -13,13 +14,13 @@ db.once("open", (err) => {
         res.status(500).json({error: '500: Unable to connect to server.' });
     }
     else {
-        console.log("Connection Established");
+        console.log("Connection Established -- Admin Profile");
     }
 });
 
 // Schemas
 const adminProfilesSchema = mongoose.Schema({
-    name: {type: String, required: true, unique: true},
+    name: {type: String, required: true, unique: false},
     address: {type: String, required: true},
     userId: {type: String, required: true}
 }, {
@@ -46,32 +47,45 @@ const getAdminProfileById = async (ID) => {
 };
 
 // Update
-const updateAdminProfileById = async (id, name, type, breed, disposition, isAvailable) => {
-    const updateResponse = await adminProfilesModel.replaceOne({_id: id}, {
-        name: name,
-        type: type,
-        breed: breed,
-        disposition: disposition,
-        dateCreated: dateCreated,
-        isAvailable: isAvailable,
-        createByUserId: createByUserId
-    });
-    return {
-        id: id,
-        name: name,
-        type: type,
-        breed: breed,
-        disposition: disposition,
-        dateCreated: dateCreated,
-        isAvailable: isAvailable,
-        createByUserId: createByUserId
-    }
+const updateAdminProfileById = async (id, name, address, userId) => {
+
+    const adminProfileQuery = adminProfilesModel.findOne({'userId': userId}).exec();
+
+    adminProfileQuery.then(adminProfile => {
+        const updateResponse = adminProfilesModel.replaceOne({_id: adminProfile._id.toString()}, {
+            name: name,
+            address: address,
+            userId: userId
+        });
+        updateResponse.then(results => {
+            console.log(results)
+            return {
+                id: id,
+                name: name,
+                address: address,
+                userId: userId
+            }
+        })
+    })
 };
 
 // Delete
 const deleteAdminProfileById = async(id) => {
-    const deleteResponse = await adminProfilesModel.deleteOne({_id: id});
-    return deleteResponse.deletedCount;
+
+    const adminProfileQuery = adminProfilesModel.findOne({'userId': id}).exec();
+
+    adminProfileQuery.then(adminProfile => {
+        console.log(adminProfile)
+        const deleteResponse = adminProfilesModel.deleteOne({_id: adminProfile._id.toString()});
+
+        deleteResponse.then(deleteCount => {
+            const deleteUser = userDbFunction.deleteUser(id);
+
+            deleteUser.then(results => {
+                return results;
+            })
+        })
+    })
 }
 
 

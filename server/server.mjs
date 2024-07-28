@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import * as userDbFunction from './models/users.mjs';
 import * as animalDbFunction from './models/animal-profiles.mjs';
 import * as adminDbFunction from './models/admin-profiles.mjs';
+import * as publicDbFunction from './models/public-profiles.mjs';
 import passport from 'passport';
 import {Strategy as LocalStrategy} from "passport-local";
 import 'dotenv/config';
@@ -76,14 +77,16 @@ passport.deserializeUser(function(id, done) {
     // })
     query.then(result => {
         if (result.type == 'admin') {
-            const queryAdmin =  adminDbFunction.getAdminProfileById(id).then(admin => {
-                return done(null, admin);
+            const queryAdmin =  adminDbFunction.getAdminProfileById(id).then(adminProfile => {
+                return done(null, adminProfile);
             })
         }
         // user for public profile
-        // else {
-
-        // }
+        else {
+            const queryPublic =  publicDbFunction.getPublicProfileById(id).then(publicProfile => {
+                return done(null, publicProfile);
+            })
+        }
     })
 });
 
@@ -95,6 +98,62 @@ function isAuthenticated(req, res, next) {
     }
     res.redirect('/login');
 }
+
+
+app.post('/login',
+    passport.authenticate('local', {
+        // successRedirect: 'http://localhost:3005/profile',
+        successRedirect: 'http://localhost:3000/Browse',
+        failureRedirect: 'http://localhost:3000/login',
+        failureFlash: true
+    })
+);
+
+
+app.post('/logout', function (req, res){
+    req.session.destroy(function (err) {
+        res.redirect('/');
+    });
+});
+
+
+/*
+****************************************************************************
+Users
+****************************************************************************
+*/
+app.get('/user', (req, res) => {
+
+    userDbFunction.getAllUser().then(users => {
+        if (users !== null) {
+            res.json(users);
+        }
+        else {
+            res.status(404).json({error: "Document was not found."});
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Retrieve document had failed."});
+    });
+});
+
+
+app.get('/user/:id', (req, res) => {
+
+    userDbFunction.getUserByID(req.params.id).then(users => {
+        if (users !== null) {
+            res.json(users);
+        }
+        else {
+            res.status(404).json({error: "Document was not found."});
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Retrieve document had failed."});
+    });
+});
 
 
 /*
@@ -138,28 +197,14 @@ app.put('/register/admin', (req, res) => {
 });
 
 
-app.post('/login',
-    passport.authenticate('local', {
-        successRedirect: 'http://localhost:3005/profile',
-        // successRedirect: 'http://localhost:3000/',
-        failureRedirect: '/login',
-        failureFlash: true
-    })
-);
+app.get('/admin/:id', (req, res) => {
+    // TODO
+    // get user profile and check created by user id 
+    // req.user.userId
 
-
-app.post('/logout', function (req, res){
-    req.session.destroy(function (err) {
-        res.redirect('/');
-    });
-});
-
-
-app.get('/user', (req, res) => {
-
-    userDbFunction.getAllUser().then(users => {
-        if (users !== null) {
-            res.json(users);
+    adminDbFunction.getAdminProfileById(req.params.id).then(adminProfile => {
+        if (adminProfile !== null) {
+            res.json(adminProfile);
         }
         else {
             res.status(404).json({error: "Document was not found."});
@@ -169,25 +214,55 @@ app.get('/user', (req, res) => {
         console.error(error);
         res.status(400).json({error: "Retrieve document had failed."});
     });
-});
+})
 
 
-app.get('/user/:id', (req, res) => {
+app.post('/admin/:id', (req, res) => {
+    // TODO
+    // get user profile and check created by user id 
+    // req.user.userId
 
-    userDbFunction.getUserByID(req.params.id).then(users => {
-        if (users !== null) {
-            console.log(users._id.toString());
-            res.json(users);
+    const admin = adminDbFunction.getAdminProfileById(req.params.id);
+
+    admin.then(adminProfile => {
+        if (adminProfile == null) {
+            res.status(404).json({error: "Admin Profile Not Found."});
         }
         else {
-            res.status(404).json({error: "Document was not found."});
+            // update 
+            adminDbFunction.updateAdminProfileById(
+                req.params.id,
+                req.body.name,
+                req.body.address,
+                adminProfile.userId
+            )
+            .then(results => {
+                res.sendStatus(200)
+            })
+            .catch(error => {
+                console.error(error);
+                res.status(400).json({error: "Update document had failed."});
+            })
         }
+    })
+})
+
+
+// Delete
+// app.get('/animals/:id', isAuthenticated, (req, res) => {
+app.delete('/admin/:id', (req, res) => {
+    // TODO
+    // get animal profile and check created by user id 
+    // req.user.userId
+    
+    adminDbFunction.deleteAdminProfileById(req.params.id).then(results => {
+        res.sendStatus(200)
     })
     .catch(error => {
         console.error(error);
-        res.status(400).json({error: "Retrieve document had failed."});
-    });
-});
+        res.status(400).json({error: "Delete document had failed."});
+    })
+})
 
 
 /*
@@ -313,6 +388,113 @@ app.delete('/animal/:id', (req, res) => {
     // req.user.userId
     
     animalDbFunction.deleteAnimalById(req.params.id).then(results => {
+        res.sendStatus(200)
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Delete document had failed."});
+    })
+})
+
+
+/*
+****************************************************************************
+PUBLIC PROFILES
+****************************************************************************
+*/
+// create public profile
+app.put('/register/public', (req, res) => {
+    const query = userDbFunction.getUserByUserName(req.body.userName);
+
+    query.then(results => {
+        // check if userName is already being used
+        if (results != null) {
+            res.status(400).json({error: "400: e-mail is already registered."});
+        } else {
+            // create user entry
+            userDbFunction.createUser(
+                req.body.userName,
+                req.body.password.toString(),
+                'public'
+            )
+            .then(user => {
+                // create public profile
+                const userId = user._id.toString();
+                publicDbFunction.createPublicProfile(
+                    req.body.name,
+                    userId
+                )
+                .then(publicProfile => {
+                    res.status(201).json(publicProfile);
+                })
+            })
+            .catch(error => {
+                console.log(error);
+                res.status(400).json({error: "Create document had failed."});
+            });
+        };
+    })
+});
+
+
+app.get('/public/:id', (req, res) => {
+    // TODO
+    // get user profile and check created by user id 
+    // req.user.userId
+
+    publicDbFunction.getPublicProfileById(req.params.id).then(publicProfile => {
+        if (publicProfile !== null) {
+            res.json(publicProfile);
+        }
+        else {
+            res.status(404).json({error: "Document was not found."});
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Retrieve document had failed."});
+    });
+})
+
+
+app.post('/public/:id', (req, res) => {
+    // TODO
+    // get user profile and check created by user id 
+    // req.user.userId
+
+    const publicProf = publicDbFunction.getPublicProfileById(req.params.id);
+
+    publicProf.then(publicProfile => {
+        if (publicProfile == null) {
+            res.status(404).json({error: "Public Profile Not Found."});
+        }
+        else {
+            // update 
+            publicDbFunction.updatePublicProfileById(
+                req.params.id,
+                req.body.name,
+                publicProfile.userId
+            )
+            .then(results => {
+                res.sendStatus(200, results)
+            })
+            .catch(error => {
+                console.error(error);
+                res.status(400).json({error: "Update document had failed."});
+            })
+        }
+    })
+})
+
+
+// Delete
+// app.get('/animals/:id', isAuthenticated, (req, res) => {
+app.delete('/public/:id', (req, res) => {
+    // TODO
+    // get animal profile and check created by user id 
+    // req.user.userId
+    
+    publicDbFunction.deletePublicProfileById(req.params.id).then(results => {
         res.sendStatus(200)
     })
     .catch(error => {
