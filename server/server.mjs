@@ -10,6 +10,7 @@ import * as publicDbFunction from './models/public-profiles.mjs';
 import passport from 'passport';
 import {Strategy as LocalStrategy} from "passport-local";
 import 'dotenv/config';
+import path from 'path';
 
 
 const PORT = process.env.PORT;
@@ -540,6 +541,12 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// Serve the React app as static files
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
