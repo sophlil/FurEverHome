@@ -47,23 +47,43 @@ const getAdminProfileById = async (ID) => {
 
 // Update
 const updateAdminProfileById = async (id, name, address, userId) => {
-    const updateResponse = await adminProfilesModel.replaceOne({_id: id}, {
-        name: name,
-        address: address,
-        userId: userId
-    });
-    return {
-        id: id,
-        name: name,
-        address: address,
-        userId: userId
-    }
+
+    const adminProfileQuery = adminProfilesModel.findOne({'userId': userId}).exec();
+
+    adminProfileQuery.then(adminProfile => {
+        const updateResponse = adminProfilesModel.replaceOne({_id: adminProfile._id.toString()}, {
+            name: name,
+            address: address,
+            userId: userId
+        });
+        updateResponse.then(results => {
+            return {
+                id: id,
+                name: name,
+                address: address,
+                userId: userId
+            }
+        })
+    })
 };
 
 // Delete
 const deleteAdminProfileById = async(id) => {
-    const deleteResponse = await adminProfilesModel.deleteOne({_id: id});
-    return deleteResponse.deletedCount;
+
+    const adminProfileQuery = adminProfilesModel.findOne({'userId': id}).exec();
+
+    adminProfileQuery.then(adminProfile => {
+        console.log(adminProfile)
+        const deleteResponse = adminProfilesModel.deleteOne({_id: adminProfile._id.toString()});
+
+        deleteResponse.then(deleteCount => {
+            const deleteUser = userDbFunction.deleteUser(id);
+
+            deleteUser.then(results => {
+                return results;
+            })
+        })
+    })
 }
 
 
