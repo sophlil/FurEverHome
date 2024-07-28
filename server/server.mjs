@@ -230,7 +230,7 @@ app.post('/admin/:id', (req, res) => {
         }
         else {
             // update 
-            animalDbFunction.updateAnimalById(
+            adminDbFunction.updateAdminProfileById(
                 req.params.id,
                 req.body.name,
                 req.body.address,

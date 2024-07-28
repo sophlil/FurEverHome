@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import "dotenv/config";
+import * as userDbFunction from './users.mjs';
 
 
 mongoose.connect(process.env.MONGODB_CONNECT_STRING,
@@ -57,6 +58,7 @@ const updateAdminProfileById = async (id, name, address, userId) => {
             userId: userId
         });
         updateResponse.then(results => {
+            console.log(results)
             return {
                 id: id,
                 name: name,
