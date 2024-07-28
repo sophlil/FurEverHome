@@ -11,6 +11,7 @@ import passport from 'passport';
 import {Strategy as LocalStrategy} from "passport-local";
 import 'dotenv/config';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 
 const PORT = process.env.PORT;
@@ -542,6 +543,9 @@ app.get('/logout', (req, res) => {
 });
 
 // Serve the React app as static files
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.get('*', (req, res) => {
