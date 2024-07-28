@@ -19,7 +19,7 @@ db.once("open", (err) => {
 
 // Schemas
 const adminProfilesSchema = mongoose.Schema({
-    name: {type: String, required: true, unique: true},
+    name: {type: String, required: true, unique: false},
     address: {type: String, required: true},
     userId: {type: String, required: true}
 }, {

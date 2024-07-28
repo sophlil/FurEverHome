@@ -52,6 +52,14 @@ const getUserByID = async (ID) => {
 };
 
 
+const deleteUser = async(id) => {
+    const userDelete = usersModel.deleteOne({_id: id})
+    userDelete.then(deleteCount => {
+        return deleteCount.deleteCount;
+    })
+}
+
+
 // To be removed
 const getAllUser = async () => {
     const query = usersModel.find();
@@ -59,4 +67,4 @@ const getAllUser = async () => {
 };
 
 
-export {createUser, getAllUser, getUserByUserName, getUserByID};
+export {createUser, getAllUser, getUserByUserName, getUserByID, deleteUser};

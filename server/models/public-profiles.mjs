@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import "dotenv/config";
+import * as userDbFunction from './users.mjs';
 
 
 mongoose.connect(process.env.MONGODB_CONNECT_STRING,
@@ -19,7 +20,7 @@ db.once("open", (err) => {
 
 // Schemas
 const publicProfilesSchema = mongoose.Schema({
-    name: {type: String, required: true, unique: true},
+    name: {type: String, required: true, unique: false},
     userId: {type: String, required: true}
 }, {
     versionKey: false
@@ -45,21 +46,41 @@ const getPublicProfileById = async (ID) => {
 
 // Update
 const updatePublicProfileById = async (id, name, userId) => {
-    const updateResponse = await publicProfilesModel.replaceOne({_id: id}, {
-        name: name,
-        userId: userId
-    });
-    return {
-        id: id,
-        name: name,
-        userId: userId
-    }
+
+    const publicProfileQuery = publicProfilesModel.findOne({'userId': userId}).exec();
+
+    publicProfileQuery.then(publicProfile => {
+        const updateResponse = publicProfilesModel.replaceOne({_id: publicProfile._id.toString()}, {
+            name: name,
+            userId: userId
+        });
+        updateResponse.then(results => {
+            return {
+                id: id,
+                name: name,
+                userId: userId
+            }
+        })
+    })
 };
 
 // Delete
 const deletePublicProfileById = async(id) => {
-    const deleteResponse = await publicProfilesModel.deleteOne({_id: id});
-    return deleteResponse.deletedCount;
+
+    const publicProfileQuery = publicProfilesModel.findOne({'userId': id}).exec();
+
+    publicProfileQuery.then(publicProfile => {
+        console.log(publicProfile)
+        const deleteResponse = publicProfilesModel.deleteOne({_id: publicProfile._id.toString()});
+
+        deleteResponse.then(deleteCount => {
+            const deleteUser = userDbFunction.deleteUser(id);
+
+            deleteUser.then(results => {
+                return results;
+            })
+        })
+    })
 }
 
 
