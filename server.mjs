@@ -515,41 +515,41 @@ APP STARTUP/LISTENER - And Express Testing Envrionment
 // Examples from Geeks for geeks
 // https://www.geeksforgeeks.org/explain-the-use-of-passport-js-for-authentication-in-express-applications/
 
-app.get('/', (req, res) => {
-    res.send('<h1>Passport.js Authentication Example</h1>');
-});
-app.get('/login', (req, res) => {
-    res.send('<h1>Login Page</h1><form action="/login" method="post">' +
-        'Username: <input type="text" name="username"><br>' +
-        'Password: <input type="password" name="password"><br>' +
-        '<input type="submit" value="Login"></form>'
-    );
-});
+// app.get('/', (req, res) => {
+//     res.send('<h1>Passport.js Authentication Example</h1>');
+// });
+// app.get('/login', (req, res) => {
+//     res.send('<h1>Login Page</h1><form action="/login" method="post">' +
+//         'Username: <input type="text" name="username"><br>' +
+//         'Password: <input type="password" name="password"><br>' +
+//         '<input type="submit" value="Login"></form>'
+//     );
+// });
 
-app.get('/profile', isAuthenticated, (req, res) => {
-    res.send(
-        `<h1>Welcome ${req.user.name}!
-        </h1><a href="/logout">Logout</a>`
-    );
-});
+// app.get('/profile', isAuthenticated, (req, res) => {
+//     res.send(
+//         `<h1>Welcome ${req.user.name}!
+//         </h1><a href="/logout">Logout</a>`
+//     );
+// });
 
-app.get('/logout', (req, res) => {
-    req.logout((err) => {
-        if (err) {
-            return next(err);
-        }
-        res.redirect('/');
-    });
-});
+// app.get('/logout', (req, res) => {
+//     req.logout((err) => {
+//         if (err) {
+//             return next(err);
+//         }
+//         res.redirect('/');
+//     });
+// });
 
 // Serve the React app as static files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, './client/build')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+  res.sendFile(path.join(__dirname, './client/build/index.html'));
 });
 
 app.listen(PORT, () => {
