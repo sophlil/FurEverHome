@@ -18,16 +18,16 @@ return (
             animal, breed, and disposition to help tailor the best results.</p>
             <Router>
             <nav>
-                <Link to ="/Login">Login</Link>
+                <Link to ="/login">Login</Link>
             </nav>
             <nav>
-              <Link to ="/Browse">Browse Pets</Link>
+              <Link to ="/browse">Browse Pets</Link>
             </nav>
             <div className="App-header">
-          <Route path="/Login">
+          <Route path="/login">
             <Login />
           </Route>
-          <Route path="/Browse">
+          <Route path="/browse">
             <Browse />
           </Route>
 
