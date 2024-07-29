@@ -10,6 +10,8 @@ import * as publicDbFunction from './models/public-profiles.mjs';
 import passport from 'passport';
 import {Strategy as LocalStrategy} from "passport-local";
 import 'dotenv/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 
 const PORT = process.env.PORT;
@@ -513,9 +515,10 @@ APP STARTUP/LISTENER - And Express Testing Envrionment
 // Examples from Geeks for geeks
 // https://www.geeksforgeeks.org/explain-the-use-of-passport-js-for-authentication-in-express-applications/
 
-app.get('/', (req, res) => {
-    res.send('<h1>Passport.js Authentication Example</h1>');
-});
+// app.get('/', (req, res) => {
+//     res.send('<h1>Passport.js Authentication Example</h1>');
+// });
+
 app.get('/login', (req, res) => {
     res.send('<h1>Login Page</h1><form action="/login" method="post">' +
         'Username: <input type="text" name="username"><br>' +
@@ -540,6 +543,15 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// Serve the React app as static files
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, './client/build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './client/build/index.html'));
+});
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
