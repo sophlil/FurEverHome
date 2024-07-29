@@ -30,8 +30,8 @@ function AnimalDisplay({pet}){
             <td>
                 <img
                     src={pet.photo} 
-                alt={pet.name}                        
-                style={{ width: '300px', height: '300px' }}
+                    alt={pet.name}                        
+                    style={{ width: '300px', height: '300px' }}
                 />
             </td>
             <td>{pet.availability}</td>
