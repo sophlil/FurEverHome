@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Browse from './pages/BrowsePets'
 import { Link } from 'react-router-dom';
+import CreatePet from './pages/CreatePet';
+import AdminPage from './pages/AdminLandingPage';
 
 function App() {
 
@@ -30,6 +32,13 @@ return (
           <Route path="/Browse">
             <Browse />
           </Route>
+          <Route path="/Create-Pet">
+            <CreatePet />
+          </Route>
+          <Route path="/Admin-Landing-Page">
+            <AdminPage />
+          </Route>
+
 
 
             </div>
