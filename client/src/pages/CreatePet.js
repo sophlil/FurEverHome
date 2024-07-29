@@ -27,7 +27,7 @@ export const AnimalProfileForm = () => {
     const addPet = () => {
         const newPet = {name,species,breed,goodWithChildren,goodWithOtherAnimals,mustBeLeashed,photo,availability,weight,height,description,age,daysSinceAvailable};
         console.log(newPet);
-        setFormData(newPet)
+ //       setFormData(newPet)
 
 
 
