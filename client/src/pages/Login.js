@@ -9,7 +9,7 @@ const Login = () => {
         <div>
             <header>
             <h2>Login Page</h2>
-                <form action="http://localhost:3005/login" method="post">
+                <form action="http://localhost:3000/login" method="post">
                     <fieldset>
                         <legend>User Name</legend>
                         <label>Please enter your User Name</label>
@@ -25,6 +25,7 @@ const Login = () => {
 
                     </fieldset>
                     <button type="submit">Login</button>
+                    <button type="submit">Sign Up</button>
                 </form>
 
             </header>
