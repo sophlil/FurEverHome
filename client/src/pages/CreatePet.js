@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
 
 export const AnimalProfileForm = () => {
-    const [formData, setFormData] = useState({});
+//    const [formData, setFormData] = useState({});
     const [name, setName] = useState('');
     const [species, setSpecies] = useState('Dog');
     const [breed, setBreed] = useState('');
