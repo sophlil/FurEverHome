@@ -23,7 +23,7 @@ const animalProfilesSchema = mongoose.Schema({
     type: {type: String, required: true},                   // dog, cat, other
     breed: {type: String, required: true},                  // most common ones + "Other"
     disposition: {type: String, required: true},            // "Good with other animals", "Good with children", "Animal must be leashed at all times"
-    isAvailable: {type: Boolean, require: true},
+    isAvailable: {type: String, require: true},             // "Not available", "Available", "Pending", "Adopted" 
     dateCreated: {type: Date, default : Date.Now, require: true},
     createByUserId: {type: String, required: true}
 }, {
