@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PetList from '../components/petList';
 // import {useState,useEffect} from 'react';
-import {useHistory} from "react-router-dom";
+//import {useHistory} from "react-router-dom";
 import '../App.css';
 import animals from '../data/data';
 
