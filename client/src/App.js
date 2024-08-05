@@ -1,13 +1,37 @@
 import './App.css';
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Browse from './pages/BrowsePets'
 import { Link } from 'react-router-dom';
 import CreatePet from './pages/CreatePet';
 import AdminPage from './pages/AdminLandingPage';
+import CreateAccount from './pages/CreateAccount';
+import Favorites from './pages/Favorites';
+import animals from './data/data'
+
+require('dotenv').config();
 
 function App() {
+
+  const [favorites,setFavorites]=useState(() => {
+  const savedFavorites = localStorage.getItem('favorites');
+  return savedFavorites ? JSON.parse(savedFavorites):[];
+  });
+
+  const toggleFavorite = (petId)=>{
+    setFavorites(prevFavorites =>
+        prevFavorites.includes(petId)
+        ?prevFavorites.filter(id => id!==petId)
+        :[...prevFavorites,petId]
+    );
+};
+
+useEffect(() => {
+  localStorage.setItem('favorites',JSON.stringify(favorites));
+},
+[favorites]);
+
 
 
 return (
@@ -30,7 +54,7 @@ return (
             <Login />
           </Route>
           <Route path="/browse">
-            <Browse />
+            <Browse pets={animals} toggleFavorite={toggleFavorite} favorites={favorites} />
           </Route>
           <Route path="/Create-Pet">
             <CreatePet />
@@ -38,6 +62,13 @@ return (
           <Route path="/Admin-Landing-Page">
             <AdminPage />
           </Route>
+          <Route path="/Create-Account">
+            <CreateAccount />
+          </Route>
+          <Route path="/favorites">
+            <Favorites pets={animals} toggleFavorite={toggleFavorite} favorites={favorites}/>
+          </Route>
+
 
 
 

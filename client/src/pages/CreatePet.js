@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
 
+const SpeciesBreeds = {
+    Dog:["Corgi","Golden Retriever","German Shepard","Other"],
+    Cat:["Tabby", "Siamese", "Persian","Other"],
+    Other:["Parrot","Rabbit","Bearded Dragon","Other"]
+}
+
 export const AnimalProfileForm = () => {
 //    const [formData, setFormData] = useState({});
     const [name, setName] = useState('');
@@ -34,6 +40,10 @@ export const AnimalProfileForm = () => {
         history.push("/");
 
     };
+    const speciesChange = (e) =>{
+        setSpecies(e.target.value);
+        setBreed('');
+    };
 
 
     return (
@@ -51,17 +61,23 @@ export const AnimalProfileForm = () => {
 
             </label>
             <label>Species: </label>
-        <select value={species} onChange={e => setSpecies(e.target.value)} >
+        <select value={species} onChange={speciesChange} >
             <option value={"Dog"}>Dog</option>
             <option value={"Cat"}>Cat</option>
             <option value={"Other"}>Other</option>
             </select>
         <label>Breed: </label>
-         <input
-            type="Text"
-            value={breed}
-            placeholder="Enter Breed here"
-            onChange={e => setBreed(e.target.value)} />
+         <select value={breed} onChange={e => setBreed(e.target.value)}>
+            <option value = "">Select Breed</option>
+            {SpeciesBreeds[species].map((breed,index)=>(
+                <option key={index} value={breed}>
+                    {breed}
+                </option>
+            ))}
+
+
+         </select>
+
         <div className="checkbox-group">
             <label>
                 <input

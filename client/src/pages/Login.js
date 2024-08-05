@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import '../App.css'
+//import CreateAccount from './CreateAccount';
+import { useHistory } from 'react-router-dom';
 
 const Login = () => {
     const[userName,setUserName] = useState('');
     const[password,setPassword] = useState('');
+    const history = useHistory();
+
+    const SignUp = () =>{
+        history.push('/Create-Account');
+    };
 
     return(
         <div>
@@ -25,7 +32,7 @@ const Login = () => {
 
                     </fieldset>
                     <button type="submit">Login</button>
-                    <button type="submit">Sign Up</button>
+                    <button type="button" onClick={SignUp}>Sign Up</button>
                 </form>
 
             </header>
