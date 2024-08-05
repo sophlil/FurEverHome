@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
+import SimpleFileUpload from 'react-simple-file-upload';
 
 const SpeciesBreeds = {
     Dog:["Corgi","Golden Retriever","German Shepard","Other"],
@@ -15,7 +16,7 @@ export const AnimalProfileForm = () => {
     const [goodWithChildren,setGoodWithChildren] = useState(false);
     const [goodWithOtherAnimals,setGoodWithOtherAnimals] = useState(false);
     const [mustBeLeashed,setMustBeLeashed] = useState(false);
-    const [photo, setPhoto] = useState(null);
+    const [photoUrl, setPhotoUrl] = useState('');
     const [availability, setAvailability] = useState('');
     const [weight, setWeight] = useState('');
     const [height, setHeight] = useState('');
@@ -26,20 +27,19 @@ export const AnimalProfileForm = () => {
 
     const history = useHistory();
 
-    const handleFileChange = (e) => {
-        setPhoto(e.target.files[0]);
-    };
+    const handleUpload = (url) => {
+        console.log(url);
+        setPhotoUrl(url);
+    }
 
     const addPet = () => {
-        const newPet = {name,species,breed,goodWithChildren,goodWithOtherAnimals,mustBeLeashed,photo,availability,weight,height,description,age,daysSinceAvailable};
+        const newPet = {name,species,breed,goodWithChildren,goodWithOtherAnimals,mustBeLeashed,photoUrl,availability,weight,height,description,age,daysSinceAvailable};
         console.log(newPet);
  //       setFormData(newPet)
-
-
-
         history.push("/");
 
     };
+
     const speciesChange = (e) =>{
         setSpecies(e.target.value);
         setBreed('');
@@ -105,10 +105,13 @@ export const AnimalProfileForm = () => {
             </label>
         </div>
         <label>Upload Photo: </label>
-        <input
-            type="file"
-            onChange={handleFileChange}
-        />
+        <div className="upload-wrapper">
+            <SimpleFileUpload
+              apiKey="f4473dfbd728d118570ccab0ad360359"
+              onSuccess={handleUpload}
+              preview="true"
+            />
+        </div>
         <label>Availability:  </label>
         <select value={availability} onChange={e => setAvailability(e.target.value)} >
             <option value={"Not Available"}>Not Available</option>

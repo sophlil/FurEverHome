@@ -33,6 +33,7 @@ const animalProfilesSchema = mongoose.Schema({
 // Animal Profile Model
 const animalProfileModel = mongoose.model("AnimalProfiles", animalProfilesSchema);
 
+
 // CRUD
 // Create animal profile
 const createAnimalProfile = async (animalName, type, breed, disposition, isAvailable, createByUserId) => {
