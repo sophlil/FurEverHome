@@ -22,7 +22,7 @@ const animalProfilesSchema = mongoose.Schema({
     animalName: {type: String, required: true, unique: true},
     type: {type: String, required: true},                   // dog, cat, other
     breed: {type: String, required: true},                  // most common ones + "Other"
-    disposition: {type: String, required: true},            // "Good with other animals", "Good with children", "Animal must be leashed at all times"
+    disposition: {type: [String], required: false},            // "Good with other animals", "Good with children", "Animal must be leashed at all times"
     isAvailable: {type: String, require: true},             // "Not available", "Available", "Pending", "Adopted" 
     dateCreated: {type: Date, default : Date.Now, require: true},
     createByUserId: {type: String, required: true}
@@ -76,6 +76,12 @@ const getAnimalProfileByID = async (id) => {
     return query.exec();
 }
 
+// Search Animal Database
+const getAnimalSearch = async (searchValues) => {
+    const query = animalProfileModel.find(searchValues);
+    return query.exec();
+}
+
 // Update
 const updateAnimalById = async (id, animalName, type, breed, disposition, isAvailable, dateCreated, createByUserId) => {
     const updateResponse = await animalProfileModel.replaceOne({_id: id}, {
@@ -105,4 +111,4 @@ const deleteAnimalById = async(id) => {
 }
 
 
-export {createAnimalProfile, getAllAnimalProfiles, getAnimalProfileByName, getAnimalProfileByID, updateAnimalById, deleteAnimalById};
+export {createAnimalProfile, getAllAnimalProfiles, getAnimalProfileByName, getAnimalProfileByID, getAnimalSearch, updateAnimalById, deleteAnimalById};

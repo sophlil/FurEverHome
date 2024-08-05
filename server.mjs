@@ -34,21 +34,21 @@ app.use(passport.session());
 /*
 ****************************************************************************
 LANDING AND LOGIN PAGES
+// source: https://github.com/jaredhanson/passport-local
+// https://www.passportjs.org/concepts/authentication/downloads/html/
 ****************************************************************************
 */
 
-// source: https://github.com/jaredhanson/passport-local
-// https://www.passportjs.org/concepts/authentication/downloads/html/
 passport.use(new LocalStrategy(
     function(user, password, done) {
         const query = userDbFunction.getUserByUserName(user)
 
         query.then(user => {
-            // invalid userName
+            // checks for valid userName
             if (user == null) {
                 return done(null, false);
             }
-            // invalid password
+            // checks for valid password
             const validation = authenticate(password, user.password);
 
             validation.then(isValid => {
@@ -67,52 +67,58 @@ passport.use(new LocalStrategy(
 
 
 passport.serializeUser(function(user, done) {
+    // serialize user id to store in session
     return done(null, user._id.toString());
 })
 
 passport.deserializeUser(function(id, done) {
+    // deserialize user id  in session
 
     const query = userDbFunction.getUserByID(id);
 
-    // query.then(result => {
-    //     return done(null, result);
-    // })
     query.then(result => {
+        // get correct profile
         if (result.type == 'admin') {
             const queryAdmin =  adminDbFunction.getAdminProfileById(id).then(adminProfile => {
+                adminProfile['type'] = "admin"
                 return done(null, adminProfile);
             })
         }
-        // user for public profile
         else {
             const queryPublic =  publicDbFunction.getPublicProfileById(id).then(publicProfile => {
+                publicProfile['type'] = "public"
                 return done(null, publicProfile);
             })
         }
     })
 });
 
-
-// check if user is authenticated
 function isAuthenticated(req, res, next) {
+    // check if user is authenticated
     if (req.isAuthenticated()) {
         return next();
     }
     res.redirect('/login');
 }
 
-
 app.post('/login',
     passport.authenticate('local', {
-        // successRedirect: 'http://localhost:3005/profile',
-        successRedirect: 'http://localhost:3000/Browse',
-        failureRedirect: 'http://localhost:3000/login',
+        successRedirect: '/loginredirect',
+        failureRedirect: '/login',
         failureFlash: true
     })
 );
 
+app.get('/loginredirect', isAuthenticated, function(req, res) {
+    // redirect based on user type
+    if (req.user.type == 'admin') {
+        res.redirect('/Admin-Landing-Page')
+    } else {
+        res.redirect('/User-Landing-Page')
+    }
+});
 
-app.post('/logout', function (req, res){
+app.post('/logout', isAuthenticated, function (req, res){
     req.session.destroy(function (err) {
         res.redirect('/');
     });
@@ -124,28 +130,37 @@ app.post('/logout', function (req, res){
 Users
 ****************************************************************************
 */
-app.get('/user', (req, res) => {
+// app.get('/user', (req, res) => {
 
-    userDbFunction.getAllUser().then(users => {
+//     userDbFunction.getAllUser().then(users => {
+//         if (users !== null) {
+//             res.json(users);
+//         }
+//         else {
+//             res.status(404).json({error: "Document was not found."});
+//         }
+//     })
+//     .catch(error => {
+//         console.error(error);
+//         res.status(400).json({error: "Retrieve document had failed."});
+//     });
+// });
+
+
+app.get('/user', isAuthenticated, (req, res) => {
+
+    userDbFunction.getUserByID(req.user.userId).then(users => {
         if (users !== null) {
-            res.json(users);
-        }
-        else {
-            res.status(404).json({error: "Document was not found."});
-        }
-    })
-    .catch(error => {
-        console.error(error);
-        res.status(400).json({error: "Retrieve document had failed."});
-    });
-});
-
-
-app.get('/user/:id', (req, res) => {
-
-    userDbFunction.getUserByID(req.params.id).then(users => {
-        if (users !== null) {
-            res.json(users);
+            if (users.type == 'admin') {
+                adminDbFunction.getAdminProfileById(req.user.userId).then(adminUser => {
+                    res.json(adminUser);
+                })
+            }
+            else {
+                publicDbFunction.getPublicProfileById(req.user.userId).then(publicUser => {
+                    res.json(publicUser);
+                })
+            }
         }
         else {
             res.status(404).json({error: "Document was not found."});
@@ -164,7 +179,7 @@ ADMIN PROFILES
 ****************************************************************************
 */
 // create admin profile
-app.put('/register/admin', (req, res) => {
+app.post('/register/admin', (req, res) => {
     const query = userDbFunction.getUserByUserName(req.body.userName);
 
     query.then(results => {
@@ -199,12 +214,9 @@ app.put('/register/admin', (req, res) => {
 });
 
 
-app.get('/admin/:id', (req, res) => {
-    // TODO
-    // get user profile and check created by user id 
-    // req.user.userId
+app.get('/admin', isAuthenticated, (req, res) => {
 
-    adminDbFunction.getAdminProfileById(req.params.id).then(adminProfile => {
+    adminDbFunction.getAdminProfileById(req.user.userId).then(adminProfile => {
         if (adminProfile !== null) {
             res.json(adminProfile);
         }
@@ -219,12 +231,9 @@ app.get('/admin/:id', (req, res) => {
 })
 
 
-app.post('/admin/:id', (req, res) => {
-    // TODO
-    // get user profile and check created by user id 
-    // req.user.userId
+app.post('/admin', isAuthenticated, (req, res) => {
 
-    const admin = adminDbFunction.getAdminProfileById(req.params.id);
+    const admin = adminDbFunction.getAdminProfileById(req.user.userId);
 
     admin.then(adminProfile => {
         if (adminProfile == null) {
@@ -252,12 +261,9 @@ app.post('/admin/:id', (req, res) => {
 
 // Delete
 // app.get('/animals/:id', isAuthenticated, (req, res) => {
-app.delete('/admin/:id', (req, res) => {
-    // TODO
-    // get animal profile and check created by user id 
-    // req.user.userId
+app.delete('/admin', isAuthenticated, (req, res) => {
     
-    adminDbFunction.deleteAdminProfileById(req.params.id).then(results => {
+    adminDbFunction.deleteAdminProfileById(req.user.userId).then(results => {
         res.sendStatus(200)
     })
     .catch(error => {
@@ -275,7 +281,9 @@ ANIMAL PROFILES
 
 
 // Add Animal Profile
-app.put('/register/animal', (req, res) => {
+app.post('/register/animal', isAuthenticated, (req, res) => {
+
+    console.log("Register Animal Request")
 
     animalDbFunction.createAnimalProfile(
         req.body.animalName,
@@ -283,16 +291,17 @@ app.put('/register/animal', (req, res) => {
         req.body.breed,
         req.body.disposition,
         req.body.isAvailable,
-        'userId' // once front end is enabled
+        req.user.userId
     )
     .then(animalProfile => {
-        res.status(201).json({comment: "Successful"});
+        res.status(201).json({message: "Successful"});
     })
     .catch(error => {
         console.log(error);
         res.status(400).json({error: "Create animal profile failed"});
     })
 });
+
 
 // Get All Animal Profiles
 app.get('/animal', (req, res) => {
@@ -310,28 +319,12 @@ app.get('/animal', (req, res) => {
     });
 });
 
-// Get Animal Profiles by Animal Name
-app.get('/animal/name/:animalName', (req, res) => {
-    animalDbFunction.getAnimalProfileByName(req.params.animalName)
-    .then(animalProfiles => {
-        if (animalProfiles !== null) {
-            res.json(animalProfiles);
-        } else {
-            res.status(404).json({error: "No animal profiles with that name found"});
-        }
-    })
-    .catch(error => {
-        console.error(error);
-        res.status(400).json({error: "Retrieve animal profile by name failed"});
-    });
-});
 
 // Get Animal Profile by ID
-app.get('/animal/:id', (req, res) => {
+app.get('/animal/:id?', (req, res) => {
     animalDbFunction.getAnimalProfileByID(req.params.id)
     .then(animalProfiles => {
         if (animalProfiles !== null) {
-            console.log(animalProfiles._id.toString());
             res.json(animalProfiles);
         } else {
             res.status(404).json({error: "No animal profiles with that id found"});
@@ -344,18 +337,48 @@ app.get('/animal/:id', (req, res) => {
 });
 
 
+// saerch animal database
+app.get('/search', (req, res) => {
+    const searchValues = {}
+
+    if (req.body.hasOwnProperty('animalName')) {
+        searchValues['animalName'] = req.body.animalName;
+    }
+    if (req.body.hasOwnProperty('type')) {
+        searchValues['type'] = req.body.type;
+    }
+    if (req.body.hasOwnProperty('breed')) {
+        searchValues['breed'] = req.body.breed;
+    }
+    if (req.body.hasOwnProperty('disposition')) {
+        searchValues['disposition'] = {$all: req.body.disposition};
+    }
+    if (req.body.hasOwnProperty('isAvailable')) {
+        searchValues['isAvailable'] = req.body.isAvailable;
+    }
+
+    animalDbFunction.getAnimalSearch(searchValues)
+    .then(animalProfiles => {
+        res.json(animalProfiles);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).json({error: "Animal Search failed"});
+    });
+})
+
+
 // Update
-// app.get('/animal/:id', isAuthenticated, (req, res) => {
-app.post('/animal/:id', (req, res) => {
-    // TODO
-    // get animal profile and check created by user id 
-    // req.user.userId
+app.post('/animal/:id', isAuthenticated, (req, res) => {
 
     const animal = animalDbFunction.getAnimalProfileByID(req.params.id);
 
     animal.then(animalProfile => {
         if (animalProfile == null) {
             res.status(404).json({error: "Animal Profile Not Found."});
+        }
+        else if (animalProfile.createByUserId != req.user.userId) {
+            res.status(403).json({message: "Forbidden"})
         }
         else {
             // update 
@@ -383,18 +406,26 @@ app.post('/animal/:id', (req, res) => {
 
 
 // Delete
-// app.get('/animals/:id', isAuthenticated, (req, res) => {
-app.delete('/animal/:id', (req, res) => {
-    // TODO
-    // get animal profile and check created by user id 
-    // req.user.userId
-    
-    animalDbFunction.deleteAnimalById(req.params.id).then(results => {
-        res.sendStatus(200)
-    })
-    .catch(error => {
-        console.error(error);
-        res.status(400).json({error: "Delete document had failed."});
+app.delete('/animal/:id', isAuthenticated, (req, res) => {
+
+    const animal = animalDbFunction.getAnimalProfileByID(req.params.id);
+
+    animal.then(animalProfile => {
+        if (animalProfile == null) {
+            res.status(404).json({error: "Animal Profile Not Found."});
+        }
+        else if (animalProfile.createByUserId != req.user.userId) {
+            res.status(403).json({message: "Forbidden"})
+        }
+        else {
+            animalDbFunction.deleteAnimalById(req.params.id).then(results => {
+                res.sendStatus(200)
+            })
+            .catch(error => {
+                console.error(error);
+                res.status(400).json({error: "Delete document had failed."});
+            })
+        }
     })
 })
 
@@ -405,7 +436,7 @@ PUBLIC PROFILES
 ****************************************************************************
 */
 // create public profile
-app.put('/register/public', (req, res) => {
+app.post('/register/public', (req, res) => {
     const query = userDbFunction.getUserByUserName(req.body.userName);
 
     query.then(results => {
@@ -439,12 +470,9 @@ app.put('/register/public', (req, res) => {
 });
 
 
-app.get('/public/:id', (req, res) => {
-    // TODO
-    // get user profile and check created by user id 
-    // req.user.userId
+app.get('/public', isAuthenticated, (req, res) => {
 
-    publicDbFunction.getPublicProfileById(req.params.id).then(publicProfile => {
+    publicDbFunction.getPublicProfileById(req.user.userId).then(publicProfile => {
         if (publicProfile !== null) {
             res.json(publicProfile);
         }
@@ -459,12 +487,9 @@ app.get('/public/:id', (req, res) => {
 })
 
 
-app.post('/public/:id', (req, res) => {
-    // TODO
-    // get user profile and check created by user id 
-    // req.user.userId
+app.post('/public', isAuthenticated, (req, res) => {
 
-    const publicProf = publicDbFunction.getPublicProfileById(req.params.id);
+    const publicProf = publicDbFunction.getPublicProfileById(req.user.userId);
 
     publicProf.then(publicProfile => {
         if (publicProfile == null) {
@@ -490,13 +515,9 @@ app.post('/public/:id', (req, res) => {
 
 
 // Delete
-// app.get('/animals/:id', isAuthenticated, (req, res) => {
-app.delete('/public/:id', (req, res) => {
-    // TODO
-    // get animal profile and check created by user id 
-    // req.user.userId
+app.delete('/public', isAuthenticated, (req, res) => {
     
-    publicDbFunction.deletePublicProfileById(req.params.id).then(results => {
+    publicDbFunction.deletePublicProfileById(req.user.userId).then(results => {
         res.sendStatus(200)
     })
     .catch(error => {
@@ -511,21 +532,6 @@ app.delete('/public/:id', (req, res) => {
 APP STARTUP/LISTENER - And Express Testing Envrionment
 ****************************************************************************
 */
-
-// Examples from Geeks for geeks
-// https://www.geeksforgeeks.org/explain-the-use-of-passport-js-for-authentication-in-express-applications/
-
-// app.get('/', (req, res) => {
-//     res.send('<h1>Passport.js Authentication Example</h1>');
-// });
-
-app.get('/login', (req, res) => {
-    res.send('<h1>Login Page</h1><form action="/login" method="post">' +
-        'Username: <input type="text" name="username"><br>' +
-        'Password: <input type="password" name="password"><br>' +
-        '<input type="submit" value="Login"></form>'
-    );
-});
 
 app.get('/profile', isAuthenticated, (req, res) => {
     res.send(
