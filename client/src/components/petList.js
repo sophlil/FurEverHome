@@ -3,7 +3,7 @@ import AnimalDisplay from './pets';
 
 
 
-function PetList({pets}){
+function PetList({pets,toggleFavorite,favorites}){
 
     return (
         <table id = "Pets">
@@ -20,12 +20,15 @@ function PetList({pets}){
                     <th>Description</th>
                     <th>Age</th>
                     <th>Days Since Available to Adopt</th>
+                    <th>Favorites</th>
                 </tr>
             </thead>
             <tbody>
-                {pets.map(pet=><AnimalDisplay pet ={pet}
-
-                key = {pet.id}/>)}
+                {pets.map(pet=><AnimalDisplay
+                 pet ={pet}
+                key = {pet.id}
+                toggleFavorite={toggleFavorite}
+                isFavorite={favorites.includes(pet.id)}/>)}
             </tbody>
         </table>
     );

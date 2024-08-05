@@ -1,6 +1,6 @@
 import React from 'react'
 
-function AnimalDisplay({pet}){
+function AnimalDisplay({pet,toggleFavorite,isFavorite}){
 
 
         return(
@@ -29,8 +29,8 @@ function AnimalDisplay({pet}){
             </td>
             <td>
                 <img
-                    src={pet.photo} 
-                    alt={pet.name}                        
+                    src={pet.photo}
+                    alt={pet.name}
                     style={{ width: '300px', height: '300px' }}
                 />
             </td>
@@ -40,6 +40,11 @@ function AnimalDisplay({pet}){
             <td>{pet.description}</td>
             <td>{pet.age}</td>
             <td>{pet.daysSinceAvailable}</td>
+            <td>
+                <button onClick ={() => toggleFavorite(pet.id)}>
+                    {isFavorite ? 'Unfavorite': 'Favorite'}
+                </button>
+            </td>
         </tr>
         );
 

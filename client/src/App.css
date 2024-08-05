@@ -102,6 +102,12 @@ button{
   color: #61dafb;
 }
 
+.filter-box{
+  border: 1px;
+  padding: 20px;
+  background-color: white;
+
+}
 
 @keyframes App-logo-spin {
   from {
