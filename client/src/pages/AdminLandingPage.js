@@ -15,7 +15,7 @@ function AdminPage({setPetToEdit}){
         <>
             <Link to ="/Create-Pet">Create a Pet</Link>
             <h2>List of Pets</h2>
-            <PetList pets={animals}/>
+            {/* <PetList pets={animals}/> */}
 
         </>
     );
