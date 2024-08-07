@@ -114,7 +114,7 @@ app.get('/loginredirect', isAuthenticated, function(req, res) {
     if (req.user.type == 'admin') {
         res.redirect('/Admin-Landing-Page')
     } else {
-        res.redirect('/User-Landing-Page')
+        res.redirect('/browse')
     }
 });
 
@@ -289,12 +289,20 @@ app.post('/register/animal', isAuthenticated, (req, res) => {
         req.body.animalName,
         req.body.type,
         req.body.breed,
-        req.body.disposition,
+        req.body.goodWithChildren,
+        req.body.goodWithOtherAnimals,
+        req.body.mustBeLeashed,
         req.body.isAvailable,
+        req.body.weight,
+        req.body.height,
+        req.body.description,
+        req.body.age,
+        req.body.dateAvailable,
         req.user.userId
     )
     .then(animalProfile => {
-        res.status(201).json({message: "Successful"});
+        // res.status(201).json({message: "Successful"});
+        res.redirect("/Admin-Landing-Page");
     })
     .catch(error => {
         console.log(error);
@@ -350,11 +358,29 @@ app.get('/search', (req, res) => {
     if (req.body.hasOwnProperty('breed')) {
         searchValues['breed'] = req.body.breed;
     }
-    if (req.body.hasOwnProperty('disposition')) {
-        searchValues['disposition'] = {$all: req.body.disposition};
+    if (req.body.hasOwnProperty('goodWithChildren')) {
+        searchValues['goodWithChildren'] = req.body.goodWithChildren;
+    }
+    if (req.body.hasOwnProperty('goodWithOtherAnimals')) {
+        searchValues['goodWithOtherAnimals'] = req.body.goodWithOtherAnimals;
+    }
+    if (req.body.hasOwnProperty('mustBeLeashed')) {
+        searchValues['mustBeLeashed'] = req.body.mustBeLeashed;
     }
     if (req.body.hasOwnProperty('isAvailable')) {
         searchValues['isAvailable'] = req.body.isAvailable;
+    }
+    if (req.body.hasOwnProperty('weight')) {
+        searchValues['weight'] = req.body.weight;
+    }
+    if (req.body.hasOwnProperty('height')) {
+        searchValues['height'] = req.body.height;
+    }
+    if (req.body.hasOwnProperty('description')) {
+        searchValues['description'] = req.body.description;
+    }
+    if (req.body.hasOwnProperty('age')) {
+        searchValues['age'] = req.body.age;
     }
 
     animalDbFunction.getAnimalSearch(searchValues)
@@ -387,9 +413,15 @@ app.post('/animal/:id', isAuthenticated, (req, res) => {
                 req.body.animalName,
                 req.body.type,
                 req.body.breed,
-                req.body.disposition,
+                req.body.goodWithChildren,
+                req.body.goodWithOtherAnimals,
+                req.body.mustBeLeashed,
                 req.body.isAvailable,
-                animalProfile.dateCreated,
+                req.body.weight,
+                req.body.height,
+                req.body.description,
+                req.body.age,
+                req.body.dateAvailable,
                 animalProfile.createByUserId
             )
             .then(results => {
@@ -458,7 +490,8 @@ app.post('/register/public', (req, res) => {
                     userId
                 )
                 .then(publicProfile => {
-                    res.status(201).json(publicProfile);
+                    // res.status(201).json(publicProfile);
+                    res.redirect("/login")
                 })
             })
             .catch(error => {

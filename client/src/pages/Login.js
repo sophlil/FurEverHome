@@ -16,7 +16,7 @@ const Login = () => {
         <div>
             <header>
             <h2>Login Page</h2>
-                <form action="http://localhost:3000/login" method="post">
+                <form action="/login" method="post">
                     <fieldset>
                         <legend>User Name</legend>
                         <label>Please enter your User Name</label>
