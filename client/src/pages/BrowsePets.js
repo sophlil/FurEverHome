@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import PetList from '../components/petList';
 import '../App.css';
 import axios from 'axios';
-import animals from '../data/data';
+// import animals from '../data/data';
 
 
 function Browse({pets, toggleFavorite,favorites}){
