@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import PetList from '../components/petList';
 import '../App.css';
+import axios from 'axios';
 import animals from '../data/data';
 
 
@@ -16,6 +17,16 @@ function Browse({pets, toggleFavorite,favorites}){
     });
 
 
+    const [getAnimals, setAnimals] = useState([]);
+
+    const fetchAniamls = async () => {
+        const result = await axios.get("/animal").then((response) => {
+            setAnimals(response.data)
+            console.log(response.data)
+            return response.data;
+        })
+    };
+   
 
     const FilterChange = (e) =>{
         const {name, value, type,checked} = e.target;
@@ -24,8 +35,9 @@ function Browse({pets, toggleFavorite,favorites}){
 
         }));
     };
+    
 
-    const petFilter = animals.filter(pet => {
+    const petFilter = getAnimals.filter(pet => {
         return (
             (filters.species === '' || pet.species === filters.species)&&
             (filters.breed === '' || pet.breed ===filters.breed)&&
@@ -35,6 +47,10 @@ function Browse({pets, toggleFavorite,favorites}){
 
         );
     });
+
+    useEffect(() => {
+        fetchAniamls();
+    }, [])
 
     return(
         <>
