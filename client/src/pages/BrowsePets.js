@@ -20,7 +20,9 @@ function Browse({pets, toggleFavorite,favorites}){
     const [getAnimals, setAnimals] = useState([]);
 
     const fetchAniamls = async () => {
-        const result = await axios.get("/animal").then((response) => {
+        const result = axios.get("/animal")
+        
+        result.then((response) => {
             setAnimals(response.data)
             console.log(response.data)
             return response.data;
