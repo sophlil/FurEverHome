@@ -2,8 +2,8 @@ import React from 'react';
 import PetList from '../components/petList';
 import '../App.css';
 
-function Favorites({pets,toggleFavorite,favorites}){
-    const favoritedPets = pets.filter(pet => favorites.includes(pet.id));
+function Favorites({pets, toggleFavorite, favorites}){
+    const favoritedPets = pets.filter(pet => favorites.includes(pet._id));
 
 
 return (

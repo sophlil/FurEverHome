@@ -5,6 +5,8 @@ import AnimalDisplay from './pets';
 
 function PetList({pets,toggleFavorite,favorites}){
 
+    console.log(toggleFavorite)
+
     return (
         <table id = "Pets">
             <thead>
@@ -28,7 +30,7 @@ function PetList({pets,toggleFavorite,favorites}){
                  pet ={pet}
                 key = {pet.id}
                 toggleFavorite={toggleFavorite}
-                isFavorite={favorites.includes(pet.id)}/>)}
+                isFavorite={favorites.includes(pet._id)}/>)}
             </tbody>
         </table>
     );

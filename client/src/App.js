@@ -8,12 +8,29 @@ import CreatePet from './pages/CreatePet';
 import AdminPage from './pages/AdminLandingPage';
 import CreateAccount from './pages/CreateAccount';
 import Favorites from './pages/Favorites';
-import animals from './data/data';
+import axios from 'axios';
+// import animals from './data/data';
 
 
 require('dotenv').config();
 
 function App() {
+
+  const [getAnimals, setAnimals] = useState([]);
+
+  const fetchAniamls = async () => {
+      const result = axios.get("/animal")
+      
+      result.then((response) => {
+          setAnimals(response.data)
+          console.log(response.data)
+          return response.data;
+      })
+  };
+
+  useEffect(() => {
+      fetchAniamls();
+  }, [])
 
   const [favorites,setFavorites]=useState(() => {
     const savedFavorites = localStorage.getItem('favorites');
@@ -23,7 +40,7 @@ function App() {
   const toggleFavorite = (petId)=>{
     setFavorites(prevFavorites =>
         prevFavorites.includes(petId)
-        ?prevFavorites.filter(id => id!==petId)
+        ?prevFavorites.filter(_id => _id!==petId)
         :[...prevFavorites,petId]
     );
   };
@@ -54,7 +71,7 @@ return (
             <Login />
           </Route>
           <Route path="/browse">
-            <Browse pets={animals} toggleFavorite={toggleFavorite} favorites={favorites} />
+            <Browse pets={getAnimals} toggleFavorite={toggleFavorite} favorites={favorites} />
           </Route>
           <Route path="/create-pet">
             <CreatePet />
@@ -66,7 +83,7 @@ return (
             <CreateAccount />
           </Route>
           <Route path="/favorites">
-            <Favorites pets={animals} toggleFavorite={toggleFavorite} favorites={favorites}/>
+            <Favorites pets={getAnimals} toggleFavorite={toggleFavorite} favorites={favorites}/>
           </Route>
         </div>
       </Router>

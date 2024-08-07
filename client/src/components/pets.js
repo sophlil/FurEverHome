@@ -2,7 +2,7 @@ import React from 'react'
 
 function AnimalDisplay({pet,toggleFavorite,isFavorite}){
 
-
+        console.log(isFavorite);
         return(
         <tr>
             <td>{pet.name}</td>
@@ -41,7 +41,7 @@ function AnimalDisplay({pet,toggleFavorite,isFavorite}){
             <td>{pet.age}</td>
             <td>{pet.daysSinceAvailable}</td>
             <td>
-                <button onClick ={() => toggleFavorite(pet.id)}>
+                <button onClick ={() => toggleFavorite(pet._id)}>
                     {isFavorite ? 'Unfavorite': 'Favorite'}
                 </button>
             </td>
