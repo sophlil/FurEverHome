@@ -19,13 +19,16 @@ db.once("open", (err) => {
 
 // Defines Animal Profile Schema
 const animalProfilesSchema = mongoose.Schema({
-    animalName: {type: String, required: true},
-    type: {type: String, required: true},                   // dog, cat, other
+    name: {type: String, required: true},
+    species: {type: String, required: true},                   // dog, cat, other
     breed: {type: String, required: true},                  // most common ones + "Other"
-    goodWithChildren: {type: Boolean, required: false},
-    goodWithOtherAnimals: {type: Boolean, required: false},
-    mustBeLeashed: {type: Boolean, required: false},
-    isAvailable: {type: String, require: true},             // "Not available", "Available", "Pending", "Adopted" 
+    disposition: {
+        "goodWithChildren": {type: Boolean},
+        "goodWithOtherAnimals": {type: Boolean},
+        "mustBeLeashed": {type: Boolean}
+    },
+    availability: {type: String, require: true},             // "Not available", "Available", "Pending", "Adopted" 
+    photo: {type: String},
     weight: {type: Number, required: true},
     height: {type: Number, required: true},
     description: {type: String, required: true},
@@ -42,17 +45,20 @@ const animalProfileModel = mongoose.model("AnimalProfiles", animalProfilesSchema
 
 // CRUD
 // Create animal profile
-const createAnimalProfile = async (animalName, type, breed, goodWithChildren, goodWithOtherAnimals, mustBeLeashed, isAvailable, weight, height, description, age, dateAvailable, createByUserId) => {
+const createAnimalProfile = async (name, species, breed, goodWithChildren, goodWithOtherAnimals, mustBeLeashed, availability, photo, weight, height, description, age, dateAvailable, createByUserId) => {
     try {
         const animalProfile = new animalProfileModel(
             {
-                animalName: animalName, 
-                type: type, 
+                name: name, 
+                species: species, 
                 breed: breed, 
-                goodWithChildren: goodWithChildren,
-                goodWithOtherAnimals: goodWithOtherAnimals,
-                mustBeLeashed: mustBeLeashed,
-                isAvailable: isAvailable, 
+                disposition: {
+                    goodWithChildren: goodWithChildren,
+                    goodWithOtherAnimals: goodWithOtherAnimals,
+                    mustBeLeashed: mustBeLeashed,
+                },
+                availability: availability, 
+                photo: photo,
                 weight: weight, 
                 height: height, 
                 description: description, 
@@ -77,8 +83,8 @@ const getAllAnimalProfiles = async () => {
 }
 
 // Read (get) animal profiles by name
-const getAnimalProfileByName = async (animalName) => {
-    const query = animalProfileModel.find({ animalName: animalName});
+const getAnimalProfileByName = async (name) => {
+    const query = animalProfileModel.find({ name: name});
     return query.exec();
 }
 
@@ -95,15 +101,18 @@ const getAnimalSearch = async (searchValues) => {
 }
 
 // Update
-const updateAnimalById = async (id, animalName, type, breed, goodWithChildren, goodWithOtherAnimals, mustBeLeashed, isAvailable, weight, height, description, age, dateAvailable, createByUserId) => {
+const updateAnimalById = async (id, name, species, breed, goodWithChildren, goodWithOtherAnimals, mustBeLeashed, availability, photo, weight, height, description, age, dateAvailable, createByUserId) => {
     const updateResponse = await animalProfileModel.replaceOne({_id: id}, {
-        animalName: animalName,
-        type: type,
+        name: name,
+        species: species,
         breed: breed,
-        goodWithChildren: goodWithChildren,
-        goodWithOtherAnimals: goodWithOtherAnimals,
-        mustBeLeashed: mustBeLeashed,
-        isAvailable: isAvailable,
+        disposition: {
+            goodWithChildren: goodWithChildren,
+            goodWithOtherAnimals: goodWithOtherAnimals,
+            mustBeLeashed: mustBeLeashed,
+        },
+        availability: availability,
+        photo: photo,
         weight: weight, 
         height: height, 
         description: description, 
@@ -113,13 +122,16 @@ const updateAnimalById = async (id, animalName, type, breed, goodWithChildren, g
     });
     return {
         id: id,
-        animalName: animalName,
-        type: type,
+        name: name,
+        species: species,
         breed: breed,
-        goodWithChildren: goodWithChildren,
-        goodWithOtherAnimals: goodWithOtherAnimals,
-        mustBeLeashed: mustBeLeashed,
-        isAvailable: isAvailable,
+        disposition: {
+            goodWithChildren: goodWithChildren,
+            goodWithOtherAnimals: goodWithOtherAnimals,
+            mustBeLeashed: mustBeLeashed,
+        },
+        availability: availability,
+        photo: photo,
         weight: weight, 
         height: height, 
         description: description, 

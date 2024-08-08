@@ -281,24 +281,27 @@ ANIMAL PROFILES
 
 
 // Add Animal Profile
-app.post('/register/animal', isAuthenticated, (req, res) => {
+app.post('/register/animal', (req, res) => {
+// app.post('/register/animal', isAuthenticated, (req, res) => {
 
     console.log("Register Animal Request")
 
     animalDbFunction.createAnimalProfile(
-        req.body.animalName,
-        req.body.type,
+        req.body.name,
+        req.body.species,
         req.body.breed,
-        req.body.goodWithChildren,
-        req.body.goodWithOtherAnimals,
-        req.body.mustBeLeashed,
-        req.body.isAvailable,
+        req.body.disposition.goodWithChildren,
+        req.body.disposition.goodWithOtherAnimals,
+        req.body.disposition.mustBeLeashed,
+        req.body.availability,
+        req.body.photo,
         req.body.weight,
         req.body.height,
         req.body.description,
         req.body.age,
         req.body.dateAvailable,
-        req.user.userId
+        req.body.createByUserId
+        // req.user.userId
     )
     .then(animalProfile => {
         // res.status(201).json({message: "Successful"});
@@ -349,26 +352,26 @@ app.get('/animal/:id?', (req, res) => {
 app.get('/search', (req, res) => {
     const searchValues = {}
 
-    if (req.body.hasOwnProperty('animalName')) {
-        searchValues['animalName'] = req.body.animalName;
+    if (req.body.hasOwnProperty('name')) {
+        searchValues['name'] = req.body.name;
     }
-    if (req.body.hasOwnProperty('type')) {
-        searchValues['type'] = req.body.type;
+    if (req.body.hasOwnProperty('species')) {
+        searchValues['species'] = req.body.species;
     }
     if (req.body.hasOwnProperty('breed')) {
         searchValues['breed'] = req.body.breed;
     }
-    if (req.body.hasOwnProperty('goodWithChildren')) {
-        searchValues['goodWithChildren'] = req.body.goodWithChildren;
+    if (req.body.disposition.hasOwnProperty('goodWithChildren')) {
+        searchValues['disposition.goodWithChildren'] = req.body.disposition.goodWithChildren;
     }
-    if (req.body.hasOwnProperty('goodWithOtherAnimals')) {
-        searchValues['goodWithOtherAnimals'] = req.body.goodWithOtherAnimals;
+    if (req.body.disposition.hasOwnProperty('goodWithOtherAnimals')) {
+        searchValues['disposition.goodWithOtherAnimals'] = req.body.disposition.goodWithOtherAnimals;
     }
-    if (req.body.hasOwnProperty('mustBeLeashed')) {
-        searchValues['mustBeLeashed'] = req.body.mustBeLeashed;
+    if (req.body.disposition.hasOwnProperty('mustBeLeashed')) {
+        searchValues['disposition.mustBeLeashed'] = req.body.disposition.mustBeLeashed;
     }
-    if (req.body.hasOwnProperty('isAvailable')) {
-        searchValues['isAvailable'] = req.body.isAvailable;
+    if (req.body.hasOwnProperty('availability')) {
+        searchValues['availability'] = req.body.availability;
     }
     if (req.body.hasOwnProperty('weight')) {
         searchValues['weight'] = req.body.weight;
@@ -410,13 +413,14 @@ app.post('/animal/:id', isAuthenticated, (req, res) => {
             // update 
             animalDbFunction.updateAnimalById(
                 req.params.id,
-                req.body.animalName,
-                req.body.type,
+                req.body.name,
+                req.body.species,
                 req.body.breed,
-                req.body.goodWithChildren,
-                req.body.goodWithOtherAnimals,
-                req.body.mustBeLeashed,
-                req.body.isAvailable,
+                req.body.disposition.goodWithChildren,
+                req.body.disposition.goodWithOtherAnimals,
+                req.body.disposition.mustBeLeashed,
+                req.body.availability,
+                animalProfile.photo,
                 req.body.weight,
                 req.body.height,
                 req.body.description,
