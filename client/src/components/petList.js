@@ -22,7 +22,7 @@ function PetList({pets,toggleFavorite,favorites}){
                     <th>Height</th>
                     <th>Description</th>
                     <th>Age</th>
-                    <th>Days Since Available to Adopt</th>
+                    <th>Date Created</th>
                     <th><Link to="/favorites">Favorites</Link></th>
                 </tr>
             </thead>

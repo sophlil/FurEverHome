@@ -3,6 +3,9 @@ import React from 'react'
 function AnimalDisplay({pet,toggleFavorite,isFavorite}){
 
         console.log(isFavorite);
+        const petDateCreated = new Date(pet.dateAvailable);
+        const formattedPetDateCreated = petDateCreated.toISOString().split('T')[0];
+        
         return(
         <tr>
             <td>{pet.name}</td>
@@ -39,7 +42,7 @@ function AnimalDisplay({pet,toggleFavorite,isFavorite}){
             <td>{pet.height}</td>
             <td>{pet.description}</td>
             <td>{pet.age}</td>
-            <td>{pet.daysSinceAvailable}</td>
+            <td>{formattedPetDateCreated}</td>
             <td>
                 <button onClick ={() => toggleFavorite(pet._id)}>
                     {isFavorite ? 'Unfavorite': 'Favorite'}

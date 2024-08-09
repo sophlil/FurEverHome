@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import SimpleFileUpload from 'react-simple-file-upload';
 import axios from 'axios';
 
 const SpeciesBreeds = {
-    Dog:["Corgi","Golden Retriever","German Shepard","Other"],
+    Dog:["Corgi","Golden Retriever","German Shepherd","Other"],
     Cat:["Tabby", "Siamese", "Persian","Other"],
     Other:["Parrot","Rabbit","Bearded Dragon","Other"]
 }
@@ -23,10 +23,9 @@ export const AnimalProfileForm = () => {
     const [height, setHeight] = useState('');
     const [description, setDescription] = useState('');
     const [age, setAge] = useState('');
-    const [daysSinceAvailable, setDaysSinceAvailable] = useState('');
 
 
-    const history = useHistory();
+    // const history = useHistory();
 
     const handleUpload = (url) => {
         console.log(url);
@@ -36,7 +35,7 @@ export const AnimalProfileForm = () => {
     const addPet = async () => {
         const newPet = {
             name,species,breed,disposition: {goodWithChildren,goodWithOtherAnimals,mustBeLeashed},
-            availability,photo,weight,height,description,age,daysSinceAvailable
+            availability,photo,weight,height,description,age
         };
         console.log(newPet);
         // setFormData(newPet)
@@ -44,7 +43,7 @@ export const AnimalProfileForm = () => {
         try { 
             const response = await axios.post('/register/animal', newPet);
             console.log("Pet added successfully:", response.data);
-            history.push("/browse");
+            // history.push("/admin-landing-page");
         } catch (error) {
             console.log("Error adding pet:", error);
         }
@@ -155,12 +154,6 @@ export const AnimalProfileForm = () => {
             placeholder="Enter age"
             value={age}
             onChange={e => setAge(e.target.value)} />
-        <label>Days Since Available </label>
-        <input
-            type="number"
-            placeholder="Enter Days Since Available to Adopt"
-            value={daysSinceAvailable}
-            onChange={e => setDaysSinceAvailable(e.target.value)} />
         <button
         type="submit"
         >Add Pet</button>

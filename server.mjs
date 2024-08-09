@@ -301,13 +301,13 @@ app.post('/register/animal', (req, res) => {
         req.body.height,
         req.body.description,
         req.body.age,
-        req.body.daysSinceAvailable,
+        req.body.dateAvailable,
         // req.body.createByUserId
         // req.user.userId
     )
     .then(animalProfile => {
         // res.status(201).json({message: "Successful"});
-        res.redirect("/Admin-Landing-Page");
+        res.redirect("/admin-landing-page");
     })
     .catch(error => {
         console.log(error);
