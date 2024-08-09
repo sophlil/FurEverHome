@@ -9,6 +9,7 @@ const CreateAccount = () => {
     return(
         <div>
             <header>
+            <div className='createAccount'/>
             <h2>Create Account</h2>
                 <form action="/register/public" method="post">
 

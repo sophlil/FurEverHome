@@ -57,6 +57,7 @@ function Browse({pets, toggleFavorite,favorites}){
     return(
         <>
         <h2>List of Pets</h2>
+        <div className='listOfPets'>
         <div className ="filter-box">
             <h3>Filter Pets</h3>
             <label>
@@ -79,6 +80,7 @@ function Browse({pets, toggleFavorite,favorites}){
                 Animal Must Be Leashed At All Times:
                 <input type= "checkbox" name = "mustBeLeashed" checked = {filters.mustBeLeashed} onChange={FilterChange}/>
             </label>
+        </div>
         </div>
         <PetList pets={petFilter} toggleFavorite={toggleFavorite} favorites={favorites}/>
         </>

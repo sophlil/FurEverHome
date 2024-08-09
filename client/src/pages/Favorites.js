@@ -8,6 +8,7 @@ function Favorites({pets, toggleFavorite, favorites}){
 
 return (
     <>
+    <div className='favorites'/>
     <h2>Your Favorited Pets</h2>
     <PetList pets ={favoritedPets} toggleFavorite={toggleFavorite} favorites={favorites}/>
 
