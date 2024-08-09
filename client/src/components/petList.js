@@ -1,5 +1,6 @@
 import React from 'react';
 import AnimalDisplay from './pets';
+import { Link } from 'react-router-dom'; 
 
 
 
@@ -22,7 +23,7 @@ function PetList({pets,toggleFavorite,favorites}){
                     <th>Description</th>
                     <th>Age</th>
                     <th>Days Since Available to Adopt</th>
-                    <th>Favorites</th>
+                    <th><Link to="/favorites">Favorites</Link></th>
                 </tr>
             </thead>
             <tbody>

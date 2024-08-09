@@ -60,6 +60,7 @@ export const AnimalProfileForm = () => {
     return (
         <div>
             <form onSubmit={addPet}>
+        <div className='createPet'/>
         <h1>Enter a Pet</h1>
 
         <label>
