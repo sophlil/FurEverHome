@@ -33,8 +33,8 @@ const animalProfilesSchema = mongoose.Schema({
     height: {type: Number, required: true},
     description: {type: String, required: true},
     age: {type: Number, required: true},
-    dateAvailable: {type: Date, default : Date.Now, require: true},
-    createByUserId: {type: String, required: true}
+    daysSinceAvailable: {type: Number, required: false},
+    createByUserId: {type: String, required: false}
 }, {
     versionKey: false
 });

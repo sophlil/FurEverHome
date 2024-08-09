@@ -19,7 +19,7 @@ function Browse({pets, toggleFavorite,favorites}){
 
     const [getAnimals, setAnimals] = useState([]);
 
-    const fetchAniamls = async () => {
+    const fetchAnimals = async () => {
         const result = axios.get("/animal")
         
         result.then((response) => {
@@ -51,7 +51,7 @@ function Browse({pets, toggleFavorite,favorites}){
     });
 
     useEffect(() => {
-        fetchAniamls();
+        fetchAnimals();
     }, [])
 
     return(

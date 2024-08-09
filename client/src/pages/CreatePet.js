@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
 import SimpleFileUpload from 'react-simple-file-upload';
+import axios from 'axios';
 
 const SpeciesBreeds = {
     Dog:["Corgi","Golden Retriever","German Shepard","Other"],
@@ -16,7 +17,7 @@ export const AnimalProfileForm = () => {
     const [goodWithChildren,setGoodWithChildren] = useState(false);
     const [goodWithOtherAnimals,setGoodWithOtherAnimals] = useState(false);
     const [mustBeLeashed,setMustBeLeashed] = useState(false);
-    const [photoUrl, setPhotoUrl] = useState('');
+    const [photo, setPhoto] = useState('');
     const [availability, setAvailability] = useState('');
     const [weight, setWeight] = useState('');
     const [height, setHeight] = useState('');
@@ -29,14 +30,24 @@ export const AnimalProfileForm = () => {
 
     const handleUpload = (url) => {
         console.log(url);
-        setPhotoUrl(url);
+        setPhoto(url);
     }
 
-    const addPet = () => {
-        const newPet = {name,species,breed,goodWithChildren,goodWithOtherAnimals,mustBeLeashed,photoUrl,availability,weight,height,description,age,daysSinceAvailable};
+    const addPet = async () => {
+        const newPet = {
+            name,species,breed,disposition: {goodWithChildren,goodWithOtherAnimals,mustBeLeashed},
+            availability,photo,weight,height,description,age,daysSinceAvailable
+        };
         console.log(newPet);
- //       setFormData(newPet)
-        history.push("/");
+        // setFormData(newPet)
+        
+        try { 
+            const response = await axios.post('http://localhost:3005/register/animal', newPet);
+            console.log("Pet added successfully:", response.data);
+            history.push("/browse");
+        } catch (error) {
+            console.log("Error adding pet:", error);
+        }
 
     };
 
@@ -48,7 +59,7 @@ export const AnimalProfileForm = () => {
 
     return (
         <div>
-            <form>
+            <form onSubmit={addPet}>
         <h1>Enter a Pet</h1>
 
         <label>
@@ -150,7 +161,7 @@ export const AnimalProfileForm = () => {
             value={daysSinceAvailable}
             onChange={e => setDaysSinceAvailable(e.target.value)} />
         <button
-        onClick={addPet}
+        type="submit"
         >Add Pet</button>
         </form>
     </div>

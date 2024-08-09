@@ -18,7 +18,7 @@ function App() {
 
   const [getAnimals, setAnimals] = useState([]);
 
-  const fetchAniamls = async () => {
+  const fetchAnimals = async () => {
       const result = axios.get("/animal")
       
       result.then((response) => {
@@ -29,7 +29,7 @@ function App() {
   };
 
   useEffect(() => {
-      fetchAniamls();
+      fetchAnimals();
   }, [])
 
   const [favorites,setFavorites]=useState(() => {
