@@ -42,7 +42,7 @@ export const AnimalProfileForm = () => {
         // setFormData(newPet)
         
         try { 
-            const response = await axios.post('http://localhost:3005/register/animal', newPet);
+            const response = await axios.post('/register/animal', newPet);
             console.log("Pet added successfully:", response.data);
             history.push("/browse");
         } catch (error) {
