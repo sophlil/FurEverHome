@@ -12,11 +12,13 @@ import {Strategy as LocalStrategy} from "passport-local";
 import 'dotenv/config';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cors from 'cors';
 
 
 const PORT = process.env.PORT;
 const app = express()
 
+app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -284,7 +286,7 @@ ANIMAL PROFILES
 app.post('/register/animal', (req, res) => {
 // app.post('/register/animal', isAuthenticated, (req, res) => {
 
-    console.log("Register Animal Request")
+    console.log("Register Animal Request Received:", req.body);
 
     animalDbFunction.createAnimalProfile(
         req.body.name,
@@ -299,8 +301,8 @@ app.post('/register/animal', (req, res) => {
         req.body.height,
         req.body.description,
         req.body.age,
-        req.body.dateAvailable,
-        req.body.createByUserId
+        req.body.daysSinceAvailable,
+        // req.body.createByUserId
         // req.user.userId
     )
     .then(animalProfile => {
