@@ -15,7 +15,7 @@ function AdminPage(){
         <> <div className='adminLandingPage'/>
 
             <Link to="/create-pet" className="link-spacing">Create a Pet</Link>
-            <Link to ="/browse" className="link-no-style">Browse Existing Pets</Link>
+            <Link to ="/admin-browse" className="link-no-style">Browse Existing Pets</Link>
 
         </>
     );

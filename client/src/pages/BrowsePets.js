@@ -5,7 +5,7 @@ import axios from 'axios';
 // import animals from '../data/data';
 
 
-function Browse({pets, toggleFavorite,favorites}){
+function Browse({pets, toggleFavorite,favorites, isEditable}){
 
     const[filters,setFilter] = useState({
         species:'',
@@ -21,14 +21,14 @@ function Browse({pets, toggleFavorite,favorites}){
 
     const fetchAnimals = async () => {
         const result = axios.get("/animal")
-        
+
         result.then((response) => {
             setAnimals(response.data)
             console.log(response.data)
             return response.data;
         })
     };
-   
+
 
     const FilterChange = (e) =>{
         const {name, value, type,checked} = e.target;
@@ -37,7 +37,7 @@ function Browse({pets, toggleFavorite,favorites}){
 
         }));
     };
-    
+
 
     const petFilter = getAnimals.filter(pet => {
         return (
@@ -82,7 +82,7 @@ function Browse({pets, toggleFavorite,favorites}){
             </label>
         </div>
         </div>
-        <PetList pets={petFilter} toggleFavorite={toggleFavorite} favorites={favorites}/>
+        <PetList pets={petFilter} toggleFavorite={toggleFavorite} favorites={favorites} showFavorites={true} isEditable={false}/>
         </>
 );
 
