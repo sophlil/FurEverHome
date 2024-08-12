@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 
 
-function PetList({pets,toggleFavorite,favorites}){
+function PetList({pets,toggleFavorite,favorites,onDelete,onEdit}){
 
     console.log(toggleFavorite)
 
@@ -31,7 +31,10 @@ function PetList({pets,toggleFavorite,favorites}){
                  pet ={pet}
                 key = {pet.id}
                 toggleFavorite={toggleFavorite}
-                isFavorite={favorites.includes(pet._id)}/>)}
+                isFavorite={favorites.includes(pet._id)}
+                onDelete={onDelete}
+                onEdit = {onEdit}
+                />)}
             </tbody>
         </table>
     );

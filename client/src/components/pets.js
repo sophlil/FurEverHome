@@ -47,6 +47,8 @@ function AnimalDisplay({pet,toggleFavorite,isFavorite}){
                 <button onClick ={() => toggleFavorite(pet._id)}>
                     {isFavorite ? 'Unfavorite': 'Favorite'}
                 </button>
+                {onEdit && <button onClick = {''}>Edit</button>}
+                {onDelete && <button onClick = {() => onDelete(pet.id)}>Delete</button>}
             </td>
         </tr>
         );

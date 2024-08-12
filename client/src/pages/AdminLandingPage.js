@@ -14,8 +14,8 @@ function AdminPage(){
     return (
         <> <div className='adminLandingPage'/>
 
-            <Link to ="/Create-Pet">Create a Pet</Link>
-            <Link to ="/browse">Browse Existing Pets</Link>
+            <Link to="/create-pet" className="link-spacing">Create a Pet</Link>
+            <Link to ="/browse" className="link-no-style">Browse Existing Pets</Link>
 
         </>
     );
