@@ -8,7 +8,6 @@ import AnimalProfileForm from './pages/CreatePet';
 import AdminPage from './pages/AdminLandingPage';
 import CreateAccount from './pages/CreateAccount';
 import Favorites from './pages/Favorites';
-import AnimalProfileForm from './pages/CreatePet';
 import UserPage from './pages/UserLandingPage';
 import MainLanding from './pages/MainPage';
 import AdminBrowse from './pages/AdminBrowse';
