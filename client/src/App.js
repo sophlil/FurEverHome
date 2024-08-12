@@ -3,8 +3,8 @@ import React,{useState,useEffect} from 'react';
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Login from './pages/Login';
 import Browse from './pages/BrowsePets'
-import { Link } from 'react-router-dom';
-import CreatePet from './pages/CreatePet';
+//import { Link } from 'react-router-dom';
+import AnimalProfileForm from './pages/CreatePet';
 import AdminPage from './pages/AdminLandingPage';
 import CreateAccount from './pages/CreateAccount';
 import Favorites from './pages/Favorites';
