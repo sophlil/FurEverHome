@@ -1,6 +1,6 @@
 import React from 'react'
 
-function AnimalDisplay({pet,toggleFavorite,isFavorite}){
+function AnimalDisplay({pet,toggleFavorite,isFavorite,onDelete,onEdit}){
 
         console.log(isFavorite);
         const petDateCreated = new Date(pet.dateAvailable);
