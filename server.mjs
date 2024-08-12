@@ -1,7 +1,7 @@
 import express from 'express';
 import session from 'express-session';
 import flash from 'express-flash';
-import {authenticate} from './lib/auth.mjs';
+import {authenticate} from './lib/auth.mjs'; 
 import bodyParser from 'body-parser';
 import * as userDbFunction from './models/users.mjs';
 import * as animalDbFunction from './models/animal-profiles.mjs';
@@ -242,7 +242,7 @@ app.post('/admin', isAuthenticated, (req, res) => {
             res.status(404).json({error: "Admin Profile Not Found."});
         }
         else {
-            // update
+            // update 
             adminDbFunction.updateAdminProfileById(
                 req.params.id,
                 req.body.name,
@@ -264,7 +264,7 @@ app.post('/admin', isAuthenticated, (req, res) => {
 // Delete
 // app.get('/animals/:id', isAuthenticated, (req, res) => {
 app.delete('/admin', isAuthenticated, (req, res) => {
-
+    
     adminDbFunction.deleteAdminProfileById(req.user.userId).then(results => {
         res.sendStatus(200)
     })
@@ -303,7 +303,7 @@ app.post('/register/animal', (req, res) => {
         req.body.age,
         req.body.dateAvailable,
         // req.body.createByUserId
-        req.user.userId
+        // req.user.userId
     )
     .then(animalProfile => {
         // res.status(201).json({message: "Successful"});
@@ -412,22 +412,22 @@ app.post('/animal/:id', isAuthenticated, (req, res) => {
             res.status(403).json({message: "Forbidden"})
         }
         else {
-            // update
+            // update 
             animalDbFunction.updateAnimalById(
                 req.params.id,
-                animalProfile.name,
-                animalProfile.species,
-                animalProfile.breed,
-                animalProfile.disposition.goodWithChildren,
-                animalProfile.disposition.goodWithOtherAnimals,
-                animalProfile.disposition.mustBeLeashed,
+                req.body.name,
+                req.body.species,
+                req.body.breed,
+                req.body.disposition.goodWithChildren,
+                req.body.disposition.goodWithOtherAnimals,
+                req.body.disposition.mustBeLeashed,
                 req.body.availability,
                 animalProfile.photo,
-                animalProfile.weight,
-                animalProfile.height,
-                animalProfile.description,
-                animalProfile.age,
-                animalProfile.dateAvailable,
+                req.body.weight,
+                req.body.height,
+                req.body.description,
+                req.body.age,
+                req.body.dateAvailable,
                 animalProfile.createByUserId
             )
             .then(results => {
@@ -535,7 +535,7 @@ app.post('/public', isAuthenticated, (req, res) => {
             res.status(404).json({error: "Public Profile Not Found."});
         }
         else {
-            // update
+            // update 
             publicDbFunction.updatePublicProfileById(
                 req.params.id,
                 req.body.name,
@@ -555,7 +555,7 @@ app.post('/public', isAuthenticated, (req, res) => {
 
 // Delete
 app.delete('/public', isAuthenticated, (req, res) => {
-
+    
     publicDbFunction.deletePublicProfileById(req.user.userId).then(results => {
         res.sendStatus(200)
     })
