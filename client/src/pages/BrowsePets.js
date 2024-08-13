@@ -43,9 +43,9 @@ function Browse({pets, toggleFavorite,favorites, isEditable}){
         return (
             (filters.species === '' || pet.species === filters.species)&&
             (filters.breed === '' || pet.breed ===filters.breed)&&
-            (!filters.goodWithChildren|| pet.disposition.goodWithChildren)&&
-            (!filters.goodWithOtherAnimals|| pet.disposition.goodWithOtherAnimals)&&
-            (!filters.mustBeLeashed || pet.disposition.mustBeLeashed)
+            (filters.goodWithChildren===false|| pet.disposition.goodWithChildren)&&
+            (filters.goodWithOtherAnimals===false|| pet.disposition.goodWithOtherAnimals)&&
+            (filters.mustBeLeashed===false || pet.disposition.mustBeLeashed)
 
         );
     });

@@ -116,7 +116,7 @@ app.get('/loginredirect', isAuthenticated, function(req, res) {
     if (req.user.type == 'admin') {
         res.redirect('/Admin-Landing-Page')
     } else {
-        res.redirect('/browse')
+        res.redirect('/user-landing-page')
     }
 });
 
