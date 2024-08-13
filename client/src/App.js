@@ -42,7 +42,8 @@ function App() {
   const onEdit = async (petID,newAvailability) => {
     console.log("Updating Pet:" )
     try {
-      await axios.post(`/animal/${petID}`,{availability: newAvailability});
+      const response = await axios.post(`/animal/${petID}`,{availability: newAvailability});
+      window.log(response)
       setAnimals(prevAnimals => prevAnimals.map(pet=>(pet._id===petID ?{...pet,availability:newAvailability}: pet)));
     }catch(error){
       console.error("Error updating pet: ", error);
