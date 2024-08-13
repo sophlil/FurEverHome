@@ -1,11 +1,17 @@
-import React from 'react'
+import React,{useState} from 'react';
 
-function AnimalDisplay({pet,toggleFavorite,isFavorite}){
+
+function AnimalDisplay({pet,toggleFavorite,isFavorite,onDelete,onEdit,showFavorites, isEditable}){
 
         console.log(isFavorite);
         const petDateCreated = new Date(pet.dateAvailable);
         const formattedPetDateCreated = petDateCreated.toISOString().split('T')[0];
-        
+        const [availability,setAvailability] = useState(pet.availability);
+        const handleEdit =(e) =>{
+            setAvailability(e.target.value);
+            onEdit(pet._id,e.target.value);
+        };
+
         return(
         <tr>
             <td>{pet.name}</td>
@@ -37,16 +43,27 @@ function AnimalDisplay({pet,toggleFavorite,isFavorite}){
                     style={{ width: '300px', height: '300px' }}
                 />
             </td>
-            <td>{pet.availability}</td>
+            <td>
+               {isEditable?( <select value ={availability} onChange={handleEdit} disabled={!showFavorites}>
+                    <option value = "Not Available">Not Available</option>
+                    <option value = "Available">Available</option>
+                    <option value = "Pending">Pending</option>
+                    <option value = "Adopted">Adopted</option>
+                </select>
+               ) :(<span>{availability}</span>)
+}
+            </td>
             <td>{pet.weight}</td>
             <td>{pet.height}</td>
             <td>{pet.description}</td>
             <td>{pet.age}</td>
             <td>{formattedPetDateCreated}</td>
             <td>
-                <button onClick ={() => toggleFavorite(pet._id)}>
+                {showFavorites&&(<button onClick ={() => toggleFavorite(pet._id)}>
                     {isFavorite ? 'Unfavorite': 'Favorite'}
-                </button>
+                </button>)}
+
+                {onDelete && <button onClick = {() => onDelete(pet._id)}>Delete</button>}
             </td>
         </tr>
         );

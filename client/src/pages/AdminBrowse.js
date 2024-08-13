@@ -5,7 +5,7 @@ import axios from 'axios';
 // import animals from '../data/data';
 
 
-function Browse({pets, toggleFavorite,favorites, isEditable}){
+function AdminBrowse({pets,onDelete,onEdit}){
 
     const[filters,setFilter] = useState({
         species:'',
@@ -28,6 +28,8 @@ function Browse({pets, toggleFavorite,favorites, isEditable}){
             return response.data;
         })
     };
+
+
 
 
     const FilterChange = (e) =>{
@@ -82,9 +84,9 @@ function Browse({pets, toggleFavorite,favorites, isEditable}){
             </label>
         </div>
         </div>
-        <PetList pets={petFilter} toggleFavorite={toggleFavorite} favorites={favorites} showFavorites={true} isEditable={false}/>
+        <PetList pets={petFilter} onDelete={onDelete} onEdit={onEdit} showFavorites={true}/>
         </>
 );
 
 }
-export default Browse;
+export default AdminBrowse;

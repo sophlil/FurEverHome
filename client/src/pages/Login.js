@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../App.css'
 //import CreateAccount from './CreateAccount';
-import { useHistory } from 'react-router-dom';
+import { useHistory} from 'react-router-dom';
 
 const Login = () => {
     const[userName,setUserName] = useState('');
@@ -27,7 +27,7 @@ const Login = () => {
                     <fieldset>
                     <legend>Password</legend>
                         <label>Please enter your Password</label>
-                        <input type = "text" name="password" value={password}
+                        <input type = "password" name="password" value={password}
                         onChange = {e=> setPassword(e.target.value)} required></input>
 
                     </fieldset>

@@ -1,10 +1,10 @@
 import React from 'react';
 import AnimalDisplay from './pets';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 
 
 
-function PetList({pets,toggleFavorite,favorites}){
+function PetList({pets,toggleFavorite,favorites = [],onEdit,onDelete,showFavorites=true,isEditable=true}){
 
     console.log(toggleFavorite)
 
@@ -23,7 +23,7 @@ function PetList({pets,toggleFavorite,favorites}){
                     <th>Description</th>
                     <th>Age</th>
                     <th>Date Created</th>
-                    <th><Link to="/favorites">Favorites</Link></th>
+                    {showFavorites&& <th><Link to="/favorites">Favorites</Link></th>}
                 </tr>
             </thead>
             <tbody>
@@ -31,7 +31,12 @@ function PetList({pets,toggleFavorite,favorites}){
                  pet ={pet}
                 key = {pet.id}
                 toggleFavorite={toggleFavorite}
-                isFavorite={favorites.includes(pet._id)}/>)}
+                isFavorite={favorites.includes(pet._id)}
+                onDelete={onDelete}
+                onEdit = {onEdit}
+                showFavorites={showFavorites}
+                isEditable={isEditable}
+                />)}
             </tbody>
         </table>
     );

@@ -31,7 +31,7 @@ const CreateAccount = () => {
                     <fieldset>
                     <legend>Password</legend>
                         <label>Create a password</label>
-                        <input type = "text" name="password" value={createPassword}
+                        <input type = "password" name="password" value={createPassword}
                         onChange = {e=> setPassword(e.target.value)} required></input>
 
                     </fieldset>
