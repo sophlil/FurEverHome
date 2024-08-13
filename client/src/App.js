@@ -42,7 +42,7 @@ function App() {
   const onEdit = async (petID,newAvailability) => {
     console.log("Updating Pet:" )
     try {
-      const response = await axios.post(`/animal/${petID}`,{availability: newAvailability});
+      await axios.post(`/animal/${petID}`,{availability: newAvailability});
       setAnimals(prevAnimals => prevAnimals.map(pet=>(pet._id===petID ?{...pet,availability:newAvailability}: pet)));
     }catch(error){
       console.error("Error updating pet: ", error);
@@ -73,7 +73,7 @@ function App() {
   [favorites]);
 
   const logOut = () => {
-    const result = axios.post("/logout");
+    axios.post("/logout");
     window.location.href = '/login';
   };
 
